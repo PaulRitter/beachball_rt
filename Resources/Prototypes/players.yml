@@ -13,13 +13,13 @@
     - shape:
         !type:PhysShapeCircle
         radius: 3
-      density: 30
       mask:
       - Solid
       - PlayerOnly
       layer:
       - Solid
       - PlayerOnly
+      restitution: 0
 
 - type: entity
   name: Karchee

@@ -11,12 +11,11 @@
     - shape:
         !type:PhysShapeCircle
         radius: 2
-      density: 5
       mask:
       - Solid
       layer:
       - Solid
-      restitution: 1
+      restitution: 0.3
 
 - type: entity
   name: Beachball

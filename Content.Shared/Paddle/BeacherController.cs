@@ -1,3 +1,4 @@
+using System;
 using JetBrains.Annotations;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
@@ -16,34 +17,49 @@ public sealed class BeacherController : VirtualController
     {
         base.UpdateBeforeSolve(prediction, frameTime);
 
-        foreach (var (paddle, transformComponent, physics) in EntityManager.EntityQuery<BeacherComponent, TransformComponent, PhysicsComponent>())
+        foreach (var (beacher, physics) in EntityManager.EntityQuery<BeacherComponent, PhysicsComponent>())
         {
+            if (beacher.LastPress.timeLeftForBoost > 0f)
+            {
+                beacher.LastPress.timeLeftForBoost = MathF.Max(0f, beacher.LastPress.timeLeftForBoost -= frameTime);
+            }
+
+            if (beacher.BoostCooldown > 0f)
+            {
+                beacher.BoostCooldown = MathF.Max(0f, beacher.BoostCooldown -= frameTime);
+            }
+            
             var force = Vector2.Zero;
             
-            if((paddle.Pressed & Button.Up) != 0)
-                force += Vector2.UnitY;
+            if(beacher.TouchingFloor && (beacher.Pressed & Button.Up) != 0)
+                force += Vector2.UnitY * SharedBeachballSystem.JumpSpeed;
             
-            if((paddle.Pressed & Button.Left) != 0)
-                force -= Vector2.UnitX;
+            if((beacher.Pressed & Button.Left) != 0)
+                force -= Vector2.UnitX * SharedBeachballSystem.PlayerSpeed;
             
-            if((paddle.Pressed & Button.Right) != 0)
-                force += Vector2.UnitX;
+            if((beacher.Pressed & Button.Right) != 0)
+                force += Vector2.UnitX * SharedBeachballSystem.PlayerSpeed;
             
-            if((paddle.Pressed & Button.Down) != 0)
-                force -= Vector2.UnitY;
+            if((beacher.Pressed & Button.Down) != 0)
+                force -= Vector2.UnitY * SharedBeachballSystem.PlayerSpeed;
 
-            if (paddle.DoubleBoostRemaining > 0)
+            physics.ApplyForce(force);
+
+            
+            physics.LinearVelocity =
+                new Vector2(
+                    Math.Clamp(physics.LinearVelocity.X, -SharedBeachballSystem.MaxHorizontalVelocity,
+                        SharedBeachballSystem.MaxHorizontalVelocity), physics.LinearVelocity.Y);
+                
+            continue;
+            
+            if (beacher.LastPress.timeLeftForBoost > 0f && beacher.BoostCooldown == 0f)
             {
-                paddle.DoubleBoostRemaining -= frameTime;
-                force *= 2;
+                beacher.BoostCooldown = SharedBeachballSystem.BoostCoolDown;
+                //velocity *= 2;
+                beacher.CanBoost = false;
             }
 
-            physics.ApplyForce(force * SharedBeachballSystem.PlayerSpeed);
-
-            if (transformComponent.WorldPosition.X > SharedBeachballSystem.FieldBounds.right / 2f)
-            {
-                transformComponent.WorldPosition = new Vector2(SharedBeachballSystem.FieldBounds.right / 2f, transformComponent.WorldPosition.Y);
-            }
         }
     }
 }
