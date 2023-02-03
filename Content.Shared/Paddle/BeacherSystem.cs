@@ -45,7 +45,7 @@ public sealed class BeacherSystem : EntitySystem
 
     private void GetPaddleState(EntityUid uid, BeacherComponent component, ref ComponentGetState args)
     {
-        args.State = new BeacherComponentState(component.Score, component.Player, component.First, component.Pressed, component.LastPress, component.DoubleBoostRemaining, component.PlayerBounds);
+        args.State = new BeacherComponentState(component.Pressed, component.Player, component.TouchingFloor, component.LastPress, component.CanBoost, component.BoostCooldown);
     }
 
     private void HandlePaddleState(EntityUid uid, BeacherComponent component, ref ComponentHandleState args)
@@ -53,39 +53,32 @@ public sealed class BeacherSystem : EntitySystem
         if (args.Current is not BeacherComponentState state)
             return;
 
-        component.Score = state.Score;
         component.Player = state.Player;
-        component.First = state.First;
-        component.DoubleBoostRemaining = state.DoubleBoostRemaining;
-        component.LastPress = state.LastPress;
         component.Pressed = state.Pressed;
-        component.PlayerBounds = state.PlayerBounds;
+        component.TouchingFloor = state.TouchingFloor;
+        component.CanBoost = state.CanBoost;
+        component.BoostCooldown = state.BoostCooldown;
+        component.LastPress = state.LastPress;
     }
     
     private void SetMovementInput(ICommonSession? session, Button button, bool state)
     {
         if (session?.AttachedEntity == null 
             || Deleted(session.AttachedEntity) 
-            || !TryComp<BeacherComponent>(session.AttachedEntity, out var paddle))
+            || !TryComp<BeacherComponent>(session.AttachedEntity, out var beacher))
             return;
 
         if (state)
         {
-            paddle.Pressed |= button;
-
-            if (paddle.LastPress.Button == button &&
-                _gameTiming.CurTick.Value - paddle.LastPress.Tick.Value <= SharedBeachballSystem.DoubleTickDelay)
-            {
-                paddle.DoubleBoostRemaining = SharedBeachballSystem.DoubleTickDuration;
-            }
-            paddle.LastPress = (button, _gameTiming.CurTick);
+            beacher.Pressed |= button;
         }
         else
         {
-            paddle.Pressed &= ~button;
+            beacher.Pressed &= ~button;
+            beacher.LastPress = (button, SharedBeachballSystem.MaxTimeBetweenBoostPress);
         }
 
-        paddle.Dirty();
+        beacher.Dirty();
     }
 
     private sealed class ButtonInputCmdHandler : InputCmdHandler
@@ -115,37 +108,32 @@ public sealed class BeacherSystem : EntitySystem
 [RegisterComponent, NetworkedComponent]
 public sealed class BeacherComponent : Component
 {
-    public Button Pressed { get; set; }
-    public float DoubleBoostRemaining;
-    public (Button Button, GameTick Tick) LastPress;
-    public int Score { get; set; }
-    public string Player { get; set; } = string.Empty;
-    public bool First { get; set; }
-    public (int Left, int Right) PlayerBounds;
+    public Button Pressed;
+    public string Player = string.Empty;
+    public bool TouchingFloor;
+    public (Button Button, float timeLeftForBoost) LastPress;
+    public bool CanBoost;
+    public float BoostCooldown;
 }
 
 [Serializable, NetSerializable]
 public sealed class BeacherComponentState : ComponentState
 {
-    public int Score { get; }
-    public string Player { get; }
-    public bool First { get; }
-    public Button Pressed { get; }
-    
-    public (Button Button, GameTick Tick) LastPress { get; }
-    public float DoubleBoostRemaining { get; }
-    public (int Left, int Right) PlayerBounds;
+    public Button Pressed;
+    public string Player;
+    public bool TouchingFloor;
+    public (Button Button, float timeLeftForBoost) LastPress;
+    public bool CanBoost;
+    public float BoostCooldown;
 
-        
-    public BeacherComponentState(int score, string player, bool first, Button pressed, (Button Button, GameTick Tick) lastPress, float doubleBoostRemaining, (int Left, int Right) playerBounds)
+    public BeacherComponentState(Button pressed, string player, bool touchingFloor, (Button Button, float timeElapsed) lastPress, bool canBoost, float boostCooldown)
     {
-        Score = score;
-        Player = player;
-        First = first;
         Pressed = pressed;
+        Player = player;
+        TouchingFloor = touchingFloor;
         LastPress = lastPress;
-        DoubleBoostRemaining = doubleBoostRemaining;
-        PlayerBounds = playerBounds;
+        CanBoost = canBoost;
+        BoostCooldown = boostCooldown;
     }
 }
 

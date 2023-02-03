@@ -9,7 +9,6 @@
     - shape:
         !type:PhysShapeAabb
         bounds: "-2.25,-6,0.5,6.25"
-      density: 30
       mask:
       - Solid
       layer:
@@ -32,7 +31,6 @@
       - shape:
           !type:PhysShapeAabb
           bounds: "-30,-20,-22,100"
-        density: 0
         mask:
           - Solid
         layer:
@@ -40,7 +38,7 @@
       - shape:
           !type:PhysShapeAabb
           bounds: "-30,-20,30,-15"
-        density: 0
+        id: Floor
         mask:
           - Solid
         layer:
@@ -48,7 +46,6 @@
       - shape:
           !type:PhysShapeAabb
           bounds: "22,-20,30,100"
-        density: 0
         mask:
           - Solid
         layer:
@@ -56,7 +53,6 @@
       - shape:
           !type:PhysShapeAabb
           bounds: "-30,95,30,100"
-        density: 0
         mask:
           - Solid
         layer:
@@ -64,7 +60,6 @@
       - shape:
           !type:PhysShapeAabb
           bounds: "-1,-20,-0.75,100"
-        density: 0
         mask:
           - PlayerOnly
         layer:

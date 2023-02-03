@@ -36,7 +36,7 @@ public sealed class GameState : State
     {
         base.FrameUpdate(e);
 
-        if (_gameHud == null)
+        /*if (_gameHud == null)
             return;
 
         var state = EntitySystem.Get<BeachballSystem>().GameState;
@@ -78,6 +78,6 @@ public sealed class GameState : State
                 winningScore = paddle.Score;
                 _gameHud.WinnerLabelText = $"{paddle.Player} wins!";
             }
-        }
+        }*/
     }
 }

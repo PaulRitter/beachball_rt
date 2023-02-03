@@ -1,18 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
+using Content.Shared.Paddle;
 using Robust.Shared.Analyzers;
 using Robust.Shared.GameObjects;
+using Robust.Shared.Physics.Dynamics;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared;
 
 [Virtual]
-public class SharedBeachballSystem : EntitySystem
+public abstract class SharedBeachballSystem : EntitySystem
 {
     public static readonly (int left, int right) FieldBounds = (-50,50);
-    public static readonly uint DoubleTickDelay = 100;
-    public static readonly uint DoubleTickDuration = 50;
-    public static readonly int PlayerSpeed = 200;
+    public const float BoostCoolDown = 2f;
+    public const float MaxTimeBetweenBoostPress = 1f;   
+    public const int PlayerSpeed = 500;
+    public const int JumpSpeed = 2000;
+    public const float MaxHorizontalVelocity = 10;
+    public const string FloorFixtureId = "Floor";
+
+    public override void Initialize()
+    {
+        base.Initialize();
+        
+        SubscribeLocalEvent<BeacherComponent, StartCollideEvent>(OnBeacherStartCollide);
+        SubscribeLocalEvent<BeacherComponent, EndCollideEvent>(OnBeacherEndCollide);
+    }
+    
+    private void OnBeacherStartCollide(EntityUid uid, BeacherComponent component, StartCollideEvent args)
+    {
+        if(args.OtherFixture.ID != FloorFixtureId) return;
+
+        component.TouchingFloor = true;
+        component.CanBoost = true;
+    }
+    
+    private void OnBeacherEndCollide(EntityUid uid, BeacherComponent component, EndCollideEvent args)
+    {
+        if(args.OtherFixture.ID != FloorFixtureId) return;
+        
+        component.TouchingFloor = false;
+    }
 }
 
 //todo make this less shit

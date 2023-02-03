@@ -3,6 +3,7 @@ using Content.Shared.Paddle;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Maths;
 using Robust.Shared.Physics.Controllers;
+using Robust.Shared.Physics.Dynamics;
 
 namespace Content.Shared.Gravity;
 
@@ -19,7 +20,7 @@ public sealed class GravityController : VirtualController
                 transform.WorldPosition = new Vector2(transform.WorldPosition.X, -15);
                 return;
             }
-            physics.ApplyForce(-Vector2.UnitY * 9.81f);
+            physics.ApplyForce(-Vector2.UnitY * 9.81f * 5);
         }
         
         foreach (var (_, transform, physics) in EntityManager
