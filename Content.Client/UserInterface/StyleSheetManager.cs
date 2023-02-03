@@ -41,7 +41,7 @@ public sealed class StyleSheetManager
         panelDarkHighlight.SetPatchMargin(StyleBox.Margin.All, 2);
         panelDarkHighlight.SetExpandMargin(StyleBox.Margin.All, 2);
 
-        var tabContainerPanelTex = _resourceCache.GetResource<TextureResource>("/Textures/Interface/tabPanel.png");
+        var tabContainerPanelTex = _resourceCache.GetResource<TextureResource>("/Textures/Interface/panel.png");
         var tabContainerPanel = new StyleBoxTexture
         {
             Texture = tabContainerPanelTex.Texture,
@@ -54,6 +54,7 @@ public sealed class StyleSheetManager
         tabContainerBoxInactive.SetContentMarginOverride(StyleBox.Margin.Horizontal, 5);
             
         var textureCloseButton = _resourceCache.GetResource<TextureResource>("/Textures/Interface/cross.png").Texture;
+        var textureBackButton = _resourceCache.GetResource<TextureResource>("/Textures/Interface/back.png").Texture;
 
         _userInterfaceManager.Stylesheet = new Stylesheet(new[]
         {
@@ -100,7 +101,22 @@ public sealed class StyleSheetManager
                 {
                     new StyleProperty(Label.StylePropertyFont, bigFont)
                 }),
-             // Window close button base texture.
+            // Back button container //TODO: hover
+            new StyleRule(
+                new SelectorElement(typeof(PanelContainer), new[] {"back"}, null, null),
+                new[]
+                {
+                    new StyleProperty(PanelContainer.StylePropertyPanel, panelDark)
+                }),
+            // Back button texture
+            new StyleRule(
+                new SelectorElement(typeof(TextureButton), new[] {"back"}, null,
+                    null),
+                new[]
+                {
+                    new StyleProperty(TextureButton.StylePropertyTexture, textureBackButton),
+                }),
+            // Window close button base texture.
             new StyleRule(
                 new SelectorElement(typeof(TextureButton), new[] {DefaultWindow.StyleClassWindowCloseButton}, null,
                     null),

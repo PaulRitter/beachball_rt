@@ -11,12 +11,14 @@ public sealed partial class LobbyHud : Control
 {
     private BeachballSystem _system;
     void OnStartGamePressed(BaseButton.ButtonEventArgs x) => _system.StartLobby();
+    void OnBackButtonPressed(BaseButton.ButtonEventArgs x) => _system.LeaveLobby();
 
     public void SubscribeToEvents(BeachballSystem system)
     {
         _system = system;
 
         StartGameButton.OnPressed += OnStartGamePressed;
+        BackButton.OnPressed += OnBackButtonPressed;
     }
     
     public void UnsubscribeFromEvents()
@@ -24,6 +26,7 @@ public sealed partial class LobbyHud : Control
         _system = null;
 
         StartGameButton.OnPressed -= OnStartGamePressed;
+        BackButton.OnPressed -= OnBackButtonPressed;
     }
     
     public void SetLobbyData(NetworkedLobby lobby)

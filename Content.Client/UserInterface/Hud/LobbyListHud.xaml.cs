@@ -12,6 +12,7 @@ public sealed partial class LobbyListHud : Control
     private BeachballSystem _system;
     void OnLobbyListOnOnItemSelected(ItemList.ItemListSelectedEventArgs x) => _system.JoinLobby(x.ItemList[x.ItemIndex].Text!);
     void OnCreateLobbyOnOnPressed(BaseButton.ButtonEventArgs x) => _system.CreateLobby(CreateLobbyName.Text);
+    void OnBackButtonPressed(BaseButton.ButtonEventArgs x) => _system.Disconnect();
 
     public void SubscribeToEvents(BeachballSystem system)
     {
@@ -19,14 +20,16 @@ public sealed partial class LobbyListHud : Control
 
         LobbyList.OnItemSelected += OnLobbyListOnOnItemSelected;
         CreateLobby.OnPressed += OnCreateLobbyOnOnPressed;
+        BackButton.OnPressed += OnBackButtonPressed;
     }
     
     public void UnsubscribeFromEvents()
     {
         _system = null;
 
-        LobbyList.OnItemSelected += OnLobbyListOnOnItemSelected;
-        CreateLobby.OnPressed += OnCreateLobbyOnOnPressed;
+        LobbyList.OnItemSelected -= OnLobbyListOnOnItemSelected;
+        CreateLobby.OnPressed -= OnCreateLobbyOnOnPressed;
+        BackButton.OnPressed -= OnBackButtonPressed;
     }
     
     public void UpdateLobbyList(BeachballSystem system)

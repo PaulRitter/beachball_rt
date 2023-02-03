@@ -8,12 +8,14 @@ using Robust.Client.State;
 using Robust.Shared.IoC;
 using Robust.Shared.Map;
 using Robust.Shared.Maths;
+using Robust.Shared.Network;
 
 namespace Content.Client;
 
 public sealed class BeachballSystem : SharedBeachballSystem
 {
     [Dependency] private readonly IStateManager _stateManager = default!;
+    [Dependency] private readonly IClientNetManager _clientNetManager = default!;
     
     public List<NetworkedLobby> Lobbies = new();
     public string? selectedLobby;
@@ -28,6 +30,7 @@ public sealed class BeachballSystem : SharedBeachballSystem
         SubscribeNetworkEvent<GameCreatedMessage>(OnGameCreated);
         SubscribeNetworkEvent<ScoredMessage>(OnScored);
         SubscribeNetworkEvent<LobbyJoinedMessage>(OnLobbyJoined);
+        SubscribeNetworkEvent<LobbyLeftMessage>(OnLobbyLeft);
         
         SubscribeLocalEvent<PlayerAttachSysMessage>(OnPlayerAttached);
         
@@ -50,6 +53,11 @@ public sealed class BeachballSystem : SharedBeachballSystem
     {
         selectedLobby = ev.Name;
         _stateManager.RequestStateChange<LobbyState>();
+    }
+
+    private void OnLobbyLeft(LobbyLeftMessage ev) 
+    {
+        _stateManager.RequestStateChange<LobbyListState>();
     }
 
     private void StateManagerOnOnStateChanged(StateChangedEventArgs obj)
@@ -94,6 +102,11 @@ public sealed class BeachballSystem : SharedBeachballSystem
         (_stateManager.CurrentState as IBeachBallState)?.UpdateData(this);
     }
 
+    public void Disconnect()
+    {
+        _clientNetManager.ClientDisconnect("Disconnected");
+    }
+
     public void JoinLobby(string lobby)
     {
         RaiseNetworkEvent(new JoinLobbyRequestMessage(){Name = lobby});
@@ -102,6 +115,11 @@ public sealed class BeachballSystem : SharedBeachballSystem
     public void CreateLobby(string name)
     {
         RaiseNetworkEvent(new CreateLobbyRequestMessage(){Name = name});
+    }
+
+    public void LeaveLobby()
+    {
+        RaiseNetworkEvent(new LeaveLobbyRequestMessage());
     }
 
     public void StartLobby()

@@ -41,11 +41,17 @@ public sealed class BeachBallSystem : SharedBeachballSystem
         SubscribeNetworkEvent<CreateLobbyRequestMessage>(OnCreateLobbyRequest);
         SubscribeNetworkEvent<StartLobbyRequestMessage>(OnStartLobbyRequest);
         SubscribeNetworkEvent<JoinLobbyRequestMessage>(OnJoinLobbyRequest);
+        SubscribeNetworkEvent<LeaveLobbyRequestMessage>(OnLeaveLobbyRequest);
     }
 
     private void OnJoinLobbyRequest(JoinLobbyRequestMessage ev, EntitySessionEventArgs args)
     {
         JoinLobby((IPlayerSession)args.SenderSession, ev.Name, null);
+    }
+
+    private void OnLeaveLobbyRequest(LeaveLobbyRequestMessage ev, EntitySessionEventArgs args)
+    {
+        LeaveLobby((IPlayerSession)args.SenderSession);
     }
 
     private void OnStartLobbyRequest(StartLobbyRequestMessage msg, EntitySessionEventArgs args)
@@ -159,9 +165,20 @@ public sealed class BeachBallSystem : SharedBeachballSystem
         if(_playerGameStates[session] != BeachballPlayerState.Lobby)
             return;
 
+        //TODO: unshit this
         if (_waitingLobbies.TryFirstOrNull(x => x.Value.Players.ContainsKey(session), out var val))
         {
             val.Value.Value.RemovePlayer(session);
+            if (val.Value.Value.Players.Count == 0)
+            {
+                // Remove the lobby from the list
+                _waitingLobbies.Remove(val.Value.Key);
+            }
+            else
+            {
+                //TODO: Make someone else admin
+            }
+            RaiseNetworkEvent(new LobbyLeftMessage(), session.ConnectedClient);
             RaiseNetworkEvent(new LobbyListMessage(){Lobbies = _waitingLobbies.Values.Select(x => (NetworkedLobby)x).ToList()});
         }
         

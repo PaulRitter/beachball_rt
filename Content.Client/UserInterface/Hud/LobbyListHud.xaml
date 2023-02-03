@@ -5,12 +5,15 @@
     <PanelContainer Margin="25 25 25 25">
         <CenterContainer Margin="5 5 5 5" HorizontalExpand="True" VerticalExpand="True">
             <BoxContainer Orientation="Vertical" VerticalExpand="True" MinSize="100 100">
+                <PanelContainer MaxSize="24 24" HorizontalAlignment="Left" StyleClasses="back" Margin="0 0 0 5">
+                    <TextureButton Name="BackButton" StyleClasses="back"/>
+                </PanelContainer>
                 <Label Text="Lobbies" />
                 <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
                     <LineEdit Name="CreateLobbyName" MinWidth="300" PlaceHolder="Lobby Name..."/>
                     <Button Name="CreateLobby" Text="Create Lobby"/>
                 </BoxContainer>
-                <controls:HLine Color="#A5640A" Thickness="2" Margin="0 5 0 5"/>
+                <controls:HLine Color="#A5640A" Thickness="2" Margin="0 5"/>
                 <ItemList Name="LobbyList" VerticalExpand="True" HorizontalExpand="True" SelectMode="Button"/>
             </BoxContainer>
         </CenterContainer>
