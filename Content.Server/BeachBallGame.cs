@@ -8,15 +8,14 @@ namespace Content.Server;
 
 public sealed class BeachBallGame
 {
-    public string Name { get; init; }
-    public List<IPlayerSession> Players { get; init; }
     public List<EntityUid> PlayerUids { get; init; }
     public EntityUid BallUid { get; init; }
     public List<int> Score { get; init; }
+    public Lobby Lobby { get; init; }
 
     public static implicit operator GameCreatedMessage(BeachBallGame game) => new()
     {
         Game = new NetworkedBeachballGame
-            { Players = game.Players.Select(x => x.Name).ToList(), Name = game.Name, Score = game.Score }
+            { Players = game.Lobby.Players.Select(x => x.Key.Name).ToList(), Name = game.Lobby.Name, Score = game.Score }
     };
 }

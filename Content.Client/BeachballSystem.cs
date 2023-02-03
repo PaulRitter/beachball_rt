@@ -5,6 +5,7 @@ using Content.Shared.ClientMessages;
 using Content.Shared.ServerMessages;
 using Robust.Client.GameObjects;
 using Robust.Client.State;
+using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
 using Robust.Shared.Map;
 using Robust.Shared.Maths;
@@ -21,6 +22,7 @@ public sealed class BeachballSystem : SharedBeachballSystem
     public string? selectedLobby;
     public NetworkedBeachballGame? GameState;
     public BeachballPlayerState PlayerState;
+    private EntityUid? _cameraUid;
     
     public override void Initialize()
     {
@@ -28,7 +30,7 @@ public sealed class BeachballSystem : SharedBeachballSystem
             
         SubscribeNetworkEvent<LobbyListMessage>(OnLobbyChanged);
         SubscribeNetworkEvent<GameCreatedMessage>(OnGameCreated);
-        SubscribeNetworkEvent<ScoredMessage>(OnScored);
+        SubscribeNetworkEvent<ScoreUpdate>(OnScored);
         SubscribeNetworkEvent<LobbyJoinedMessage>(OnLobbyJoined);
         SubscribeNetworkEvent<LobbyLeftMessage>(OnLobbyLeft);
         
@@ -62,6 +64,11 @@ public sealed class BeachballSystem : SharedBeachballSystem
 
     private void StateManagerOnOnStateChanged(StateChangedEventArgs obj)
     {
+        if (_cameraUid.HasValue && obj.NewState is not UserInterface.States.GameState)
+        {
+            EntityManager.DeleteEntity(_cameraUid.Value);
+        }
+
         if(obj.OldState is IBeachBallState oldState) oldState.UnsubscribeFromEvents(this);
         
         if (obj.NewState is not IBeachBallState beachBallState) return;
@@ -76,17 +83,17 @@ public sealed class BeachballSystem : SharedBeachballSystem
             return;
 
         // This will set a camera in the middle of the arena.
-        var camera = EntityManager.SpawnEntity(null, new MapCoordinates(new Vector2(0,0), Transform(ev.AttachedEntity).MapID));
-        var eye = EnsureComp<EyeComponent>(camera);
+        _cameraUid = EntityManager.SpawnEntity(null, new MapCoordinates(new Vector2(0,0), Transform(ev.AttachedEntity).MapID));
+        var eye = EnsureComp<EyeComponent>(_cameraUid.Value);
         eye.Current = true;
         eye.Zoom = Vector2.One * 1.5f;
     }
 
-    private void OnScored(ScoredMessage ev)
+    private void OnScored(ScoreUpdate ev)
     {
         if (GameState == null) return;
         
-        GameState.Score[ev.Index] += 1;
+        GameState.Score = ev.Scores;
         (_stateManager.CurrentState as IBeachBallState)?.UpdateData(this);
     }
 

@@ -16,6 +16,7 @@ using Robust.Shared.IoC;
 using Robust.Shared.Map;
 using Robust.Shared.Physics;
 using Robust.Shared.Players;
+using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 
 namespace Content.Server;
@@ -31,9 +32,7 @@ public sealed class BeachBallSystem : SharedBeachballSystem
     private Dictionary<ICommonSession, BeachballPlayerState> _playerGameStates = new();
     private Dictionary<string, Lobby> _waitingLobbies = new();
     private Dictionary<MapId, BeachBallGame> _gameStates = new();
-
-    private HashSet<MapId> _processed = new();
-
+    
     public override void Initialize()
     {
         base.Initialize();
@@ -66,11 +65,11 @@ public sealed class BeachBallSystem : SharedBeachballSystem
 
         var players = lobby.Players.Keys.ToList();
         var playerUids = new List<EntityUid>();
-        var p1 = EntityManager.SpawnEntity("playerMonkey", new MapCoordinates(-15, -10, gameMap));
+        var p1 = EntityManager.SpawnEntity("playerMonkey", new MapCoordinates(0, 0, gameMap));
         players[0].AttachToEntity(p1);
         playerUids.Add(p1);
 
-        var p2 = EntityManager.SpawnEntity("playerCat", new MapCoordinates(15, -10, gameMap));
+        var p2 = EntityManager.SpawnEntity("playerCat", new MapCoordinates(0, 0, gameMap));
         players[1].AttachToEntity(p2);
         playerUids.Add(p2);
 
@@ -86,22 +85,21 @@ public sealed class BeachBallSystem : SharedBeachballSystem
         EntityManager.SpawnEntity("arenaNet", new MapCoordinates(0, -10, gameMap));
         EntityManager.SpawnEntity("arenaBackground", new MapCoordinates(0, 0, gameMap));
 
-        var ball = EntityManager.SpawnEntity("ballBeach", new MapCoordinates(-13, -3, gameMap));
+        var ball = EntityManager.SpawnEntity("ballBeach", new MapCoordinates(0, 0, gameMap));
 
         _waitingLobbies.Remove(msg.Name);
         var game = new BeachBallGame()
         {
-            Name = msg.Name,
-            Players = players,
             Score = new List<int>(),
             PlayerUids = playerUids,
-            BallUid = ball
+            BallUid = ball,
+            Lobby = lobby
         };
         game.Score.Add(0);
         game.Score.Add(0);
         _gameStates.Add(gameMap, game);
         RaiseNetworkEvent(game);
-        StartRound(gameMap, 0);
+        ResetField(game.PlayerUids, game.BallUid, 0);
     }
 
     private void OnCreateLobbyRequest(CreateLobbyRequestMessage ev, EntitySessionEventArgs args)
@@ -110,7 +108,8 @@ public sealed class BeachBallSystem : SharedBeachballSystem
         var name = ev.Name.Trim();
         //TODO: notify user
         if(string.IsNullOrWhiteSpace(name) ||
-            _waitingLobbies.ContainsKey(name) || 
+            _waitingLobbies.ContainsKey(name) ||
+            _gameStates.Any(x => x.Value.Lobby.Name == name) ||
             _playerGameStates[args.SenderSession] != BeachballPlayerState.MainMenu)
             return;
 
@@ -187,56 +186,38 @@ public sealed class BeachBallSystem : SharedBeachballSystem
         SetPlayerState(session, BeachballPlayerState.MainMenu);
     }
 
-    public override void Update(float frameTime)
+    protected override void OnScored(MapId mapId, int ballIndex)
     {
-        base.Update(frameTime);
-        return;
-        _processed.Clear();
-        foreach (var (_, transform) in EntityManager.EntityQuery<BallComponent, TransformComponent>())
+        if(!_gameStates.TryGetValue(mapId, out var game))
+            return;
+
+        game.Score[ballIndex] += 1;
+        RaiseNetworkEvent(new ScoreUpdate(){Scores = game.Score});
+
+        if (game.Score[ballIndex] >= WinScore)
         {
-            if(_processed.Contains(transform.MapID) || Paused(_mapManager.GetMapEntityId(transform.MapID)))
-                continue;
-
-            _processed.Add(transform.MapID);
-            
-            if (transform.MapPosition.Y <= 0)
-            {
-                var index = 0;
-                //someone scored
-                if (transform.MapPosition.X > FieldBounds.right / 2f)
-                {
-                    //p1
-                    index = 0;
-                }
-                else
-                {
-                    //p2
-                    index = 1;
-                }
-
-                var game = _gameStates[transform.MapID];
-                game.Score[index] += 1;
-                RaiseNetworkEvent(new ScoredMessage(){Index = index});
-
-                //todo check for win condition
-
-                index++;
-                if (index > game.Players.Count - 1)
-                {
-                    index = 0;
-                }
-                StartRound(transform.MapID, index);
-            }
+            //win!!!!!
+            _mapManager.SetMapPaused(mapId, true);
+            Timer.Spawn(AfterWinDuration, () => CloseGame(mapId));
+            return;
         }
+        
+        ResetField(game.PlayerUids, game.BallUid, ballIndex);
     }
 
-    private void StartRound(MapId mapId, int ballIndex)
+    private void CloseGame(MapId mapId)
     {
         var game = _gameStates[mapId];
+        _gameStates.Remove(mapId);
+        _mapManager.DeleteMap(mapId);
         
-        Comp<BallComponent>(game.BallUid).Frozen = true;
-        //todo players to positions
-        //todo ball to position
-        //todo freeze ball until player moves
+        var lobby = game.Lobby;
+        _waitingLobbies[lobby.Name] = lobby;
+        
+        foreach (var (player, _) in lobby.Players)
+        {
+            RaiseNetworkEvent(new LobbyJoinedMessage(){Name = lobby.Name}, player.ConnectedClient);
+        }
+        RaiseNetworkEvent(new LobbyListMessage(){Lobbies = _waitingLobbies.Values.Select(x => (NetworkedLobby)x).ToList()});
     }
 }
