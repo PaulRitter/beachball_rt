@@ -19,7 +19,6 @@
       - Solid
       - PlayerOnly
       layer:
-      - Solid
       - PlayerOnly
       restitution: 0
 
