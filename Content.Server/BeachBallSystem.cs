@@ -99,12 +99,17 @@ public sealed class BeachBallSystem : SharedBeachballSystem
 
     private void OnCreateLobbyRequest(CreateLobbyRequestMessage ev, EntitySessionEventArgs args)
     {
-        if(_waitingLobbies.ContainsKey(ev.Name) || _playerGameStates[args.SenderSession] != BeachballPlayerState.MainMenu)
+        // remove excess whitespaces
+        var name = ev.Name.Trim();
+        //TODO: notify user
+        if(string.IsNullOrEmpty(name) ||
+            _waitingLobbies.ContainsKey(name) || 
+            _playerGameStates[args.SenderSession] != BeachballPlayerState.MainMenu)
             return;
 
-        var lobby = new Lobby(ev.Name, null);
-        _waitingLobbies[ev.Name] = lobby;
-        JoinLobby((IPlayerSession)args.SenderSession, ev.Name, null);
+        var lobby = new Lobby(name, null);
+        _waitingLobbies[name] = lobby;
+        JoinLobby((IPlayerSession)args.SenderSession, name, null);
         lobby.MakeAdmin((IPlayerSession)args.SenderSession);
     }
 
