@@ -57,7 +57,6 @@ public sealed class EntryPoint : GameClient
         var overlayManager = IoCManager.Resolve<IOverlayManager>();
             
         // Add the needed overlays.
-        overlayManager.AddOverlay(new CollisionOverlay());
         overlayManager.AddOverlay(new ArenaOverlay());
     }
 }

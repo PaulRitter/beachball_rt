@@ -8,6 +8,7 @@ using Robust.Shared.Input.Binding;
 using Robust.Shared.IoC;
 using Robust.Shared.Players;
 using Robust.Shared.Serialization;
+using Robust.Shared.Timing;
 
 namespace Content.Shared.Paddle;
 
@@ -19,27 +20,31 @@ namespace Content.Shared.Paddle;
 public sealed class PaddleSystem : EntitySystem
 {
     [Dependency] private readonly IConfigurationManager _cfgManager = default!;
-
-    public float PaddleSpeed { get; private set; }
-        
+    [Dependency] private readonly IGameTiming _gameTiming = default!;
+    
     public override void Initialize()
     {
         base.Initialize();
             
         SubscribeLocalEvent<PaddleComponent, ComponentGetState>(GetPaddleState);
         SubscribeLocalEvent<PaddleComponent, ComponentHandleState>(HandlePaddleState);
-            
-        _cfgManager.OnValueChanged(ContentCVars.PaddleSpeed, OnPaddleSpeedChanged, true);
-            
+        
         CommandBinds.Builder
             .Bind(EngineKeyFunctions.MoveUp, new ButtonInputCmdHandler(Button.Up, SetMovementInput))
-            .Bind(EngineKeyFunctions.MoveDown, new ButtonInputCmdHandler(Button.Down, SetMovementInput))
+            .Bind(EngineKeyFunctions.MoveLeft, new ButtonInputCmdHandler(Button.Left, SetMovementInput))
+            .Bind(EngineKeyFunctions.MoveRight, new ButtonInputCmdHandler(Button.Right, SetMovementInput))
             .Register<PaddleSystem>();
+    }
+    
+    public override void Shutdown()
+    {
+        base.Shutdown();
+        CommandBinds.Unregister<PaddleSystem>();
     }
 
     private void GetPaddleState(EntityUid uid, PaddleComponent component, ref ComponentGetState args)
     {
-        args.State = new PaddleComponentState(component.Score, component.Player, component.First, component.Pressed);
+        args.State = new PaddleComponentState(component.Score, component.Player, component.First, component.Pressed, component.LastPress, component.DoubleBoostRemaining, component.PlayerBounds);
     }
 
     private void HandlePaddleState(EntityUid uid, PaddleComponent component, ref ComponentHandleState args)
@@ -50,19 +55,12 @@ public sealed class PaddleSystem : EntitySystem
         component.Score = state.Score;
         component.Player = state.Player;
         component.First = state.First;
+        component.DoubleBoostRemaining = state.DoubleBoostRemaining;
+        component.LastPress = state.LastPress;
+        component.Pressed = state.Pressed;
+        component.PlayerBounds = state.PlayerBounds;
     }
-
-    public override void Shutdown()
-    {
-        base.Shutdown();
-        CommandBinds.Unregister<PaddleSystem>();
-    }
-        
-    private void OnPaddleSpeedChanged(float speed)
-    {
-        PaddleSpeed = speed;
-    }
-
+    
     private void SetMovementInput(ICommonSession? session, Button button, bool state)
     {
         if (session?.AttachedEntity == null 
@@ -71,10 +69,21 @@ public sealed class PaddleSystem : EntitySystem
             return;
 
         if (state)
+        {
             paddle.Pressed |= button;
+
+            if (paddle.LastPress.Button == button &&
+                _gameTiming.CurTick.Value - paddle.LastPress.Tick.Value <= SharedBeachballSystem.DoubleTickDelay)
+            {
+                paddle.DoubleBoostRemaining = SharedBeachballSystem.DoubleTickDuration;
+            }
+            paddle.LastPress = (button, _gameTiming.CurTick);
+        }
         else
+        {
             paddle.Pressed &= ~button;
-            
+        }
+
         paddle.Dirty();
     }
 
@@ -105,10 +114,13 @@ public sealed class PaddleSystem : EntitySystem
 [RegisterComponent, NetworkedComponent]
 public sealed class PaddleComponent : Component
 {
-    public Button Pressed { get; set; } = Button.None;
-    public int Score { get; set; } = 0;
+    public Button Pressed { get; set; }
+    public float DoubleBoostRemaining;
+    public (Button Button, GameTick Tick) LastPress;
+    public int Score { get; set; }
     public string Player { get; set; } = string.Empty;
-    public bool First { get; set; } = false;
+    public bool First { get; set; }
+    public (int Left, int Right) PlayerBounds;
 }
 
 [Serializable, NetSerializable]
@@ -118,13 +130,21 @@ public sealed class PaddleComponentState : ComponentState
     public string Player { get; }
     public bool First { get; }
     public Button Pressed { get; }
+    
+    public (Button Button, GameTick Tick) LastPress { get; }
+    public float DoubleBoostRemaining { get; }
+    public (int Left, int Right) PlayerBounds;
+
         
-    public PaddleComponentState(int score, string player, bool first, Button pressed)
+    public PaddleComponentState(int score, string player, bool first, Button pressed, (Button Button, GameTick Tick) lastPress, float doubleBoostRemaining, (int Left, int Right) playerBounds)
     {
         Score = score;
         Player = player;
         First = first;
         Pressed = pressed;
+        LastPress = lastPress;
+        DoubleBoostRemaining = doubleBoostRemaining;
+        PlayerBounds = playerBounds;
     }
 }
 
@@ -133,5 +153,6 @@ public enum Button
 {
     None = 0,
     Up = 1,
-    Down = 2,
+    Left = 2,
+    Right = 4,
 }

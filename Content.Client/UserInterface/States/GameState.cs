@@ -17,51 +17,33 @@ public sealed class GameState : State
     [Dependency] private readonly IUserInterfaceManager _userInterface = default!;
         
     private GameHud? _gameHud;
-    private LobbyHud? _lobbyHud;
         
     public override void Startup()
     {
         _gameHud = new GameHud() { Visible = false };
-        _lobbyHud = new LobbyHud() {Visible = false };
             
         LayoutContainer.SetAnchorAndMarginPreset(_gameHud, LayoutContainer.LayoutPreset.Wide);
-        LayoutContainer.SetAnchorAndMarginPreset(_lobbyHud, LayoutContainer.LayoutPreset.Wide);
             
         _userInterface.StateRoot.AddChild(_gameHud);
-        _userInterface.StateRoot.AddChild(_lobbyHud);
     }
 
     public override void Shutdown()
     {
         _gameHud?.Dispose();
-        _lobbyHud?.Dispose();
     }
 
     public override void FrameUpdate(FrameEventArgs e)
     {
         base.FrameUpdate(e);
 
-        if (_gameHud == null || _lobbyHud == null)
+        if (_gameHud == null)
             return;
 
-        var state = EntitySystem.Get<PongSystem>().State;
+        var state = EntitySystem.Get<BeachballSystem>().GameState;
+        
+        if(state == null) return;
 
-        switch (state)
-        {
-            case PongGameState.Game:
-            case PongGameState.End:
-                _gameHud.Visible = true;
-                _lobbyHud.Visible = false;
-                break;
-            case PongGameState.Start:
-                _gameHud.Visible = false;
-                _lobbyHud.Visible = true;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-            
-        var gameEnded = state == PongGameState.End;
+        var gameEnded = false;
 
         if (!gameEnded)
             _gameHud.WinnerLabelText = string.Empty;

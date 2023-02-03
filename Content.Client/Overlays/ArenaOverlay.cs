@@ -28,7 +28,8 @@ public sealed class ArenaOverlay : Overlay
         var handle = args.WorldHandle;
             
         handle.UseShader(_shader);
-        handle.DrawRect(SharedPongSystem.ArenaBox, Color.White, false);
+        //draw bg texture
+        //draw sun
         handle.UseShader(null);
     }
 }

@@ -11,14 +11,13 @@ namespace Content.Shared.Ball;
 [UsedImplicitly]
 public sealed class BallController : VirtualController
 {
-    [Dependency] private readonly BallSystem _ballSystem = default!;
     [Dependency] private readonly SharedAudioSystem _audioSystem = default!;
     
     public override void Initialize()
     {
         base.Initialize();
         
-        UpdatesBefore.Add(typeof(ArenaController));
+        //UpdatesBefore.Add(typeof(ArenaController));
     }
 
     public override void UpdateAfterSolve(bool prediction, float frameTime)
@@ -27,20 +26,32 @@ public sealed class BallController : VirtualController
 
         foreach (var (_, transform, physics) in EntityManager.EntityQuery<BallComponent, TransformComponent, PhysicsComponent>())
         {
-            var y = transform.WorldPosition.Y;
+            var bounced = false;
 
-            // Reflect velocity on collision with arena.
-            if (!(y > 0) || !(y < SharedPongSystem.ArenaBox.Height))
+            if (transform.WorldPosition.Y <= 0)
             {
                 physics.LinearVelocity *= new Vector2(1, -1);
-                _audioSystem.PlayGlobal("/Audio/bloop.wav", Filter.Broadcast(), AudioParams.Default.WithVolume(-5f));
+                bounced = true;
+            }
+            
+            var x = transform.WorldPosition.X;
+
+            if ((x <= SharedBeachballSystem.FieldBounds.left && physics.LinearVelocity.X < 0) ||
+                (x >= SharedBeachballSystem.FieldBounds.right && physics.LinearVelocity.X > 0))
+            {
+                physics.LinearVelocity *= new Vector2(-1, 1);
+                bounced = true;
             }
 
-            var maxSpeed = _ballSystem.BallMaximumSpeed;
-
-            // Ensure ball doesn't go above the maximum speed.
-            if (physics.LinearVelocity.Length > maxSpeed)
-                physics.LinearVelocity = physics.LinearVelocity.Normalized * maxSpeed;
+            if (bounced)
+            {
+                _audioSystem.PlayGlobal("/Audio/bloop.wav", Filter.Broadcast(), AudioParams.Default.WithVolume(-5f));
+            }
+            
+            //todo paul apply gravity
         }
     }
 }
+
+[RegisterComponent]
+public sealed class BallComponent : Component {}

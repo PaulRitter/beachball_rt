@@ -1,3 +1,4 @@
+using Content.Client.UserInterface.Hud;
 using Content.Client.UserInterface.States;
 using JetBrains.Annotations;
 using Robust.Client;
@@ -24,7 +25,7 @@ public sealed class HudManager
             {
                 case ClientRunLevel.InGame:
                 case ClientRunLevel.Connected:
-                    _stateManager.RequestStateChange<GameState>();
+                    _stateManager.RequestStateChange<LobbyListState>();
                     break;
                     
                 case ClientRunLevel.Initialize when args.OldLevel < ClientRunLevel.Connected:

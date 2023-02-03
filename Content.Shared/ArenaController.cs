@@ -9,7 +9,7 @@ namespace Content.Shared;
 /// <summary>
 ///     Ensures no game objects go out of bounds.
 /// </summary>
-[UsedImplicitly]
+/*todo paul reimplement[UsedImplicitly]
 public sealed class ArenaController : VirtualController
 {
     public override void UpdateAfterSolve(bool prediction, float frameTime)
@@ -31,4 +31,4 @@ public sealed class ArenaController : VirtualController
             transform.WorldPosition = new Vector2(x, y);
         }
     }
-}
+}*/

@@ -1,7 +1,13 @@
 <Control xmlns="https://spacestation14.io" HorizontalExpand="True" VerticalExpand="True" HorizontalAlignment="Center" VerticalAlignment="Center">
     <PanelContainer Margin="25 25 25 25">
         <CenterContainer Margin="5 5 5 5" HorizontalExpand="True" VerticalExpand="True">
-            <Label Text="Waiting for players..." />
+            <BoxContainer Orientation="Vertical">
+                <BoxContainer Orientation="Horizontal">
+                    <Button Text="Start Game" Disabled="True" Name="StartGameButton"></Button>
+                    <Label Text="Players" />
+                </BoxContainer>
+                <ItemList Name="PlayerList" VerticalExpand="True" HorizontalExpand="True" SelectMode="Button"></ItemList>
+            </BoxContainer>
         </CenterContainer>
     </PanelContainer>
 </Control>
