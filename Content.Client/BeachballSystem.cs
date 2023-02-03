@@ -68,10 +68,10 @@ public sealed class BeachballSystem : SharedBeachballSystem
             return;
 
         // This will set a camera in the middle of the arena.
-        var camera = EntityManager.SpawnEntity(null, new MapCoordinates(new Vector2(50,50), Transform(ev.AttachedEntity).MapID));
+        var camera = EntityManager.SpawnEntity(null, new MapCoordinates(new Vector2(0,0), Transform(ev.AttachedEntity).MapID));
         var eye = EnsureComp<EyeComponent>(camera);
         eye.Current = true;
-        eye.Zoom = Vector2.One;
+        eye.Zoom = Vector2.One * 1.5f;
     }
 
     private void OnScored(ScoredMessage ev)

@@ -1,0 +1,71 @@
+- type: entity
+  id: arenaNet
+  name: Net
+  description: net
+  components:
+  - type: Physics
+  - type: Fixtures
+    fixtures:
+    - shape:
+        !type:PhysShapeAabb
+        bounds: "-2.25,-6,0.5,6.25"
+      density: 30
+      mask:
+      - Solid
+      layer:
+      - Solid
+  - type: Sprite
+    texture: Beachball/background.rsi/halo.png
+    drawdepth: Objects
+    
+- type: entity
+  id: arenaBackground
+  name: Background
+  description: net
+  components:
+    - type: Sprite
+      texture: Beachball/background.rsi/background03.png
+      drawdepth: Background
+    - type: Physics
+    - type: Fixtures
+      fixtures:
+      - shape:
+          !type:PhysShapeAabb
+          bounds: "-30,-20,-22,100"
+        density: 0
+        mask:
+          - Solid
+        layer:
+          - Solid
+      - shape:
+          !type:PhysShapeAabb
+          bounds: "-30,-20,30,-15"
+        density: 0
+        mask:
+          - Solid
+        layer:
+          - Solid
+      - shape:
+          !type:PhysShapeAabb
+          bounds: "22,-20,30,100"
+        density: 0
+        mask:
+          - Solid
+        layer:
+          - Solid
+      - shape:
+          !type:PhysShapeAabb
+          bounds: "-30,95,30,100"
+        density: 0
+        mask:
+          - Solid
+        layer:
+          - Solid
+      - shape:
+          !type:PhysShapeAabb
+          bounds: "-1,-20,-0.75,100"
+        density: 0
+        mask:
+          - PlayerOnly
+        layer:
+          - PlayerOnly

@@ -1,0 +1,60 @@
+- type: entity
+  save: false
+  abstract: true
+  id: BallBase
+  components:
+  - type: Ball
+  - type: Physics
+    bodyType: Dynamic
+  - type: Fixtures
+    fixtures:
+    - shape:
+        !type:PhysShapeCircle
+        radius: 2
+      density: 5
+      mask:
+      - Solid
+      layer:
+      - Solid
+      restitution: 1
+
+- type: entity
+  name: Beachball
+  id: ballBeach
+  parent: BallBase
+  description: beachball
+  components:
+  - type: Sprite
+    sprite: Beachball/balls.rsi
+    state: beachball
+    drawdepth: Objects
+
+#- type: entity
+#  name: Basketball
+#  id: ballBasket
+#  parent: BallBase
+#  description: basketball
+#  components:
+#  - type: Sprite
+#    sprite: Beachball/balls.rsi
+#    state: basketball
+
+#- type: entity
+#  name: Watermelon
+#  id: ballMelon
+#  parent: BallBase
+#  description: watermelon
+#  components:
+#  - type: Sprite
+#    sprite: Beachball/balls.rsi
+#    state: melon
+
+#- type: entity
+#  name: Banana
+#  id: ballBanana
+#  parent: BallBase
+#  description: banana
+#  components:
+#  - type: Sprite
+#    sprite: Beachball/balls.rsi
+#    state: banana

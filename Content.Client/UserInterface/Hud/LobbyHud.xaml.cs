@@ -12,15 +12,6 @@ public sealed partial class LobbyHud : Control
     private BeachballSystem _system;
     void OnStartGamePressed(BaseButton.ButtonEventArgs x) => _system.StartLobby();
 
-    public LobbyHud()
-    {
-        RobustXamlLoader.Load(this);
-
-#if DEBUG
-        StartGameButton.Disabled = false;
-#endif
-    }
-
     public void SubscribeToEvents(BeachballSystem system)
     {
         _system = system;

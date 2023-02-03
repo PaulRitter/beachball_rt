@@ -2,6 +2,7 @@
 using System.Linq;
 using Content.Shared;
 using Robust.Server.Player;
+using Robust.Shared.GameObjects;
 
 namespace Content.Server;
 
@@ -9,6 +10,8 @@ public sealed class BeachBallGame
 {
     public string Name { get; init; }
     public List<IPlayerSession> Players { get; init; }
+    public List<EntityUid> PlayerUids { get; init; }
+    public EntityUid BallUid { get; init; }
     public List<int> Score { get; init; }
 
     public static implicit operator GameCreatedMessage(BeachBallGame game) => new()

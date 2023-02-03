@@ -1,7 +1,7 @@
 ﻿<Control xmlns="https://spacestation14.io" HorizontalExpand="True" VerticalExpand="True" HorizontalAlignment="Center" VerticalAlignment="Center">
     <PanelContainer Margin="25 25 25 25">
         <CenterContainer Margin="5 5 5 5" HorizontalExpand="True" VerticalExpand="True">
-            <BoxContainer Orientation="Vertical" VerticalExpand="True">
+            <BoxContainer Orientation="Vertical" VerticalExpand="True" MinSize="100 100">
                 <Label Text="Lobbies" />
                 <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
                     <LineEdit Name="CreateLobbyName" MinWidth="300"/>

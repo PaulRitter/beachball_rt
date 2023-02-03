@@ -14,4 +14,5 @@ public enum CollisionGroup
 {
     None = 0,
     Solid = 1 << 0,
+    PlayerOnly = 1 << 1,
 }

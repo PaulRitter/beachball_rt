@@ -8,7 +8,7 @@ using Robust.Shared.Timing;
 namespace Content.Shared.Paddle;
 
 [UsedImplicitly]
-public sealed class PaddleController : VirtualController
+public sealed class BeacherController : VirtualController
 {
     [Dependency] private readonly IGameTiming _gameTiming = default!;
     
@@ -16,26 +16,29 @@ public sealed class PaddleController : VirtualController
     {
         base.UpdateBeforeSolve(prediction, frameTime);
 
-        foreach (var (paddle, transformComponent, physics) in EntityManager.EntityQuery<PaddleComponent, TransformComponent, PhysicsComponent>())
+        foreach (var (paddle, transformComponent, physics) in EntityManager.EntityQuery<BeacherComponent, TransformComponent, PhysicsComponent>())
         {
-            var direction = Vector2.Zero;
+            var force = Vector2.Zero;
             
             if((paddle.Pressed & Button.Up) != 0)
-                direction += Vector2.UnitY;
+                force += Vector2.UnitY;
             
             if((paddle.Pressed & Button.Left) != 0)
-                direction -= Vector2.UnitX;
+                force -= Vector2.UnitX;
             
-            if((paddle.Pressed & Button.Left) != 0)
-                direction += Vector2.UnitX;
+            if((paddle.Pressed & Button.Right) != 0)
+                force += Vector2.UnitX;
+            
+            if((paddle.Pressed & Button.Down) != 0)
+                force -= Vector2.UnitY;
 
             if (paddle.DoubleBoostRemaining > 0)
             {
                 paddle.DoubleBoostRemaining -= frameTime;
-                direction *= 2;
+                force *= 2;
             }
 
-            physics.LinearVelocity = direction * SharedBeachballSystem.PlayerSpeed;
+            physics.ApplyForce(force * SharedBeachballSystem.PlayerSpeed);
 
             if (transformComponent.WorldPosition.X > SharedBeachballSystem.FieldBounds.right / 2f)
             {

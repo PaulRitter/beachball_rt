@@ -17,7 +17,7 @@ namespace Content.Shared.Paddle;
 ///     Since this is in shared, it will be predicted on the client and reconciled if needed.
 /// </summary>
 [UsedImplicitly]
-public sealed class PaddleSystem : EntitySystem
+public sealed class BeacherSystem : EntitySystem
 {
     [Dependency] private readonly IConfigurationManager _cfgManager = default!;
     [Dependency] private readonly IGameTiming _gameTiming = default!;
@@ -26,30 +26,31 @@ public sealed class PaddleSystem : EntitySystem
     {
         base.Initialize();
             
-        SubscribeLocalEvent<PaddleComponent, ComponentGetState>(GetPaddleState);
-        SubscribeLocalEvent<PaddleComponent, ComponentHandleState>(HandlePaddleState);
+        SubscribeLocalEvent<BeacherComponent, ComponentGetState>(GetPaddleState);
+        SubscribeLocalEvent<BeacherComponent, ComponentHandleState>(HandlePaddleState);
         
         CommandBinds.Builder
             .Bind(EngineKeyFunctions.MoveUp, new ButtonInputCmdHandler(Button.Up, SetMovementInput))
             .Bind(EngineKeyFunctions.MoveLeft, new ButtonInputCmdHandler(Button.Left, SetMovementInput))
             .Bind(EngineKeyFunctions.MoveRight, new ButtonInputCmdHandler(Button.Right, SetMovementInput))
-            .Register<PaddleSystem>();
+            .Bind(EngineKeyFunctions.MoveDown, new ButtonInputCmdHandler(Button.Down, SetMovementInput))
+            .Register<BeacherSystem>();
     }
     
     public override void Shutdown()
     {
         base.Shutdown();
-        CommandBinds.Unregister<PaddleSystem>();
+        CommandBinds.Unregister<BeacherSystem>();
     }
 
-    private void GetPaddleState(EntityUid uid, PaddleComponent component, ref ComponentGetState args)
+    private void GetPaddleState(EntityUid uid, BeacherComponent component, ref ComponentGetState args)
     {
-        args.State = new PaddleComponentState(component.Score, component.Player, component.First, component.Pressed, component.LastPress, component.DoubleBoostRemaining, component.PlayerBounds);
+        args.State = new BeacherComponentState(component.Score, component.Player, component.First, component.Pressed, component.LastPress, component.DoubleBoostRemaining, component.PlayerBounds);
     }
 
-    private void HandlePaddleState(EntityUid uid, PaddleComponent component, ref ComponentHandleState args)
+    private void HandlePaddleState(EntityUid uid, BeacherComponent component, ref ComponentHandleState args)
     {
-        if (args.Current is not PaddleComponentState state)
+        if (args.Current is not BeacherComponentState state)
             return;
 
         component.Score = state.Score;
@@ -65,7 +66,7 @@ public sealed class PaddleSystem : EntitySystem
     {
         if (session?.AttachedEntity == null 
             || Deleted(session.AttachedEntity) 
-            || !TryComp<PaddleComponent>(session.AttachedEntity, out var paddle))
+            || !TryComp<BeacherComponent>(session.AttachedEntity, out var paddle))
             return;
 
         if (state)
@@ -112,7 +113,7 @@ public sealed class PaddleSystem : EntitySystem
 }
 
 [RegisterComponent, NetworkedComponent]
-public sealed class PaddleComponent : Component
+public sealed class BeacherComponent : Component
 {
     public Button Pressed { get; set; }
     public float DoubleBoostRemaining;
@@ -124,7 +125,7 @@ public sealed class PaddleComponent : Component
 }
 
 [Serializable, NetSerializable]
-public sealed class PaddleComponentState : ComponentState
+public sealed class BeacherComponentState : ComponentState
 {
     public int Score { get; }
     public string Player { get; }
@@ -136,7 +137,7 @@ public sealed class PaddleComponentState : ComponentState
     public (int Left, int Right) PlayerBounds;
 
         
-    public PaddleComponentState(int score, string player, bool first, Button pressed, (Button Button, GameTick Tick) lastPress, float doubleBoostRemaining, (int Left, int Right) playerBounds)
+    public BeacherComponentState(int score, string player, bool first, Button pressed, (Button Button, GameTick Tick) lastPress, float doubleBoostRemaining, (int Left, int Right) playerBounds)
     {
         Score = score;
         Player = player;
@@ -155,4 +156,5 @@ public enum Button
     Up = 1,
     Left = 2,
     Right = 4,
+    Down = 8,
 }

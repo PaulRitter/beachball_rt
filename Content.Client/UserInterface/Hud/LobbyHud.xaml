@@ -3,7 +3,7 @@
         <CenterContainer Margin="5 5 5 5">
             <BoxContainer Orientation="Vertical" MinSize="100 100">
                 <BoxContainer Orientation="Horizontal">
-                    <Button Text="Start Game" Disabled="True" Name="StartGameButton"/>
+                    <Button Text="Start Game" Name="StartGameButton"/>
                     <Label Text="Players" />
                 </BoxContainer>
                 <ItemList Name="PlayerList" VerticalExpand="True" SelectMode="Button"/>

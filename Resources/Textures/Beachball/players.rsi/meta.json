@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "size": {
+    "x": 256,
+    "y": 256
+  },
+  "states": [
+    {
+      "name": "alien"
+    },
+    {
+      "name": "bee"
+    },
+    {
+      "name": "monkey"
+    },
+    {
+      "name": "penguin"
+    },
+    {
+      "name": "sloth"
+    },
+    {
+      "name": "turtle"
+    },
+    {
+      "name": "cat"
+    },
+    {
+      "name": "chicken"
+    },
+    {
+      "name": "cow"
+    },
+    {
+      "name": "devil"
+    },
+    {
+      "name": "dragon"
+    },
+    {
+      "name": "fish"
+    },
+    {
+      "name": "griffin"
+    },
+    {
+      "name": "paul"
+    },
+    {
+      "name": "lion"
+    }
+  ]
+}

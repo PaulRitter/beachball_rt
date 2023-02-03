@@ -9,12 +9,13 @@ namespace Content.Shared;
 [Virtual]
 public class SharedBeachballSystem : EntitySystem
 {
-    public static readonly (int left, int right) FieldBounds = (0,100);
+    public static readonly (int left, int right) FieldBounds = (-50,50);
     public static readonly uint DoubleTickDelay = 100;
     public static readonly uint DoubleTickDuration = 50;
-    public static readonly int PlayerSpeed = 6;
+    public static readonly int PlayerSpeed = 200;
 }
 
+//todo make this less shit
 [Serializable, NetSerializable]
 public sealed class LobbyListMessage : EntityEventArgs
 {

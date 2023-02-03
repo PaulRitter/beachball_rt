@@ -1,0 +1,172 @@
+- type: entity
+  save: false
+  abstract: true
+  id: PlayerBase
+  components:
+  - type: Sprite
+    drawdepth: Objects
+  - type: Beacher
+  - type: Physics
+    bodyType: Dynamic
+  - type: Fixtures
+    fixtures:
+    - shape:
+        !type:PhysShapeCircle
+        radius: 3
+      density: 30
+      mask:
+      - Solid
+      - PlayerOnly
+      layer:
+      - Solid
+      - PlayerOnly
+
+- type: entity
+  name: Karchee
+  id: playerMonkey
+  parent: PlayerBase
+  description: monke
+  components:
+  - type: Sprite
+    sprite: Beachball/players.rsi
+    state: monkey
+
+- type: entity
+  name: Purr
+  id: playerCat
+  parent: PlayerBase
+  description: cat
+  components:
+  - type: Sprite
+    sprite: Beachball/players.rsi
+    state: cat
+
+- type: entity
+  name: Moobie
+  id: playerCow
+  parent: PlayerBase
+  description: cow
+  components:
+  - type: Sprite
+    sprite: Beachball/players.rsi
+    state: cow
+
+- type: entity
+  name: Chipsy
+  id: playerChicken
+  parent: PlayerBase
+  description: chimken
+  components:
+  - type: Sprite
+    sprite: Beachball/players.rsi
+    state: chicken
+
+- type: entity
+  name: Mrs Darlington
+  id: playerFish
+  parent: PlayerBase
+  description: goldfish
+  components:
+  - type: Sprite
+    sprite: Beachball/players.rsi
+    state: fish
+
+- type: entity
+  name: Benedek
+  id: playerTurtle
+  parent: PlayerBase
+  description: turtle
+  components:
+  - type: Sprite
+    sprite: Beachball/players.rsi
+    state: cow
+
+- type: entity
+  name: BoyE
+  id: playerPenguin
+  parent: PlayerBase
+  description: penguin
+  components:
+  - type: Sprite
+    sprite: Beachball/players.rsi
+    state: penguin
+
+- type: entity
+  name: Sanchez
+  id: playerLion
+  parent: PlayerBase
+  description: big cat
+  components:
+  - type: Sprite
+    sprite: Beachball/players.rsi
+    state: lion
+
+- type: entity
+  name: Dale
+  id: playerGriffin
+  parent: PlayerBase
+  description: griffin
+  components:
+  - type: Sprite
+    sprite: Beachball/players.rsi
+    state: griffin
+
+- type: entity
+  name: Mime
+  id: playerAlien
+  parent: PlayerBase
+  description: alien
+  components:
+  - type: Sprite
+    sprite: Beachball/players.rsi
+    state: alien
+
+- type: entity
+  name: Alattomos
+  id: playerDevil
+  parent: PlayerBase
+  description: devil
+  components:
+  - type: Sprite
+    sprite: Beachball/players.rsi
+    state: devil
+
+- type: entity
+  name: Smaug
+  id: playerDragon
+  parent: PlayerBase
+  description: dragon
+  components:
+  - type: Sprite
+    sprite: Beachball/players.rsi
+    state: dragon
+
+- type: entity
+  name: Lemmy
+  id: playerSloth
+  parent: PlayerBase
+  description: sloth
+  components:
+  - type: Sprite
+    sprite: Beachball/players.rsi
+    state: sloth
+
+- type: entity
+  name: Lancelot
+  id: playerRitter
+  parent: PlayerBase
+  description: paul
+  components:
+  - type: Sprite
+    sprite: Beachball/players.rsi
+    state: paul
+
+- type: entity
+  name: Lizzy
+  id: playerBee
+  parent: PlayerBase
+  description: B
+  components:
+  - type: Sprite
+    sprite: Beachball/players.rsi
+    state: bee

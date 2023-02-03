@@ -5,6 +5,7 @@ using Content.Shared;
 using Content.Shared.Ball;
 using Content.Shared.ClientMessages;
 using Content.Shared.ServerMessages;
+using Robust.Server.GameObjects;
 using Robust.Server.Maps;
 using Robust.Server.Player;
 using Robust.Shared.Configuration;
@@ -38,6 +39,12 @@ public sealed class BeachBallSystem : SharedBeachballSystem
         _playerManager.PlayerStatusChanged += OnPlayerStatusChanged;
         SubscribeNetworkEvent<CreateLobbyRequestMessage>(OnCreateLobbyRequest);
         SubscribeNetworkEvent<StartLobbyRequestMessage>(OnStartLobbyRequest);
+        SubscribeNetworkEvent<JoinLobbyRequestMessage>(OnJoinLobbyRequest);
+    }
+
+    private void OnJoinLobbyRequest(JoinLobbyRequestMessage ev, EntitySessionEventArgs args)
+    {
+        JoinLobby((IPlayerSession)args.SenderSession, ev.Name, null);
     }
 
     private void OnStartLobbyRequest(StartLobbyRequestMessage msg, EntitySessionEventArgs args)
@@ -49,31 +56,40 @@ public sealed class BeachBallSystem : SharedBeachballSystem
             return;
         
         var gameMap = _mapManager.CreateMap();
-        //_mapLoader.LoadMap(gameMap, "");
 
         var players = lobby.Players.Keys.ToList();
-        
-        //todo put all players in there
-        var p1 = EntityManager.SpawnEntity("Paddle", new MapCoordinates(0, 0, gameMap));
+        var playerUids = new List<EntityUid>();
+        var p1 = EntityManager.SpawnEntity("playerMonkey", new MapCoordinates(-15, -10, gameMap));
         players[0].AttachToEntity(p1);
+        playerUids.Add(p1);
 
-        var p2 = EntityManager.SpawnEntity("Paddle", new MapCoordinates(0, 0, gameMap));
+        var p2 = EntityManager.SpawnEntity("playerCat", new MapCoordinates(15, -10, gameMap));
         players[1].AttachToEntity(p2);
+        playerUids.Add(p2);
 
         if (players.Count > 2)
         {
             for (int i = 2; i < players.Count; i++)
             {
-                var entity = EntityManager.SpawnEntity(null, new MapCoordinates(FieldBounds.right/2, 50, gameMap));
+                var entity = EntityManager.SpawnEntity(null, new MapCoordinates(0, 0, gameMap));
                 players[i].AttachToEntity(entity);
             }
         }
-        
-        //todo spawn ball
-        //todo freeze ball until a player moves
+
+        EntityManager.SpawnEntity("arenaNet", new MapCoordinates(0, -10, gameMap));
+        EntityManager.SpawnEntity("arenaBackground", new MapCoordinates(0, 0, gameMap));
+
+        var ball = EntityManager.SpawnEntity("ballBeach", new MapCoordinates(-13, -3, gameMap));
 
         _waitingLobbies.Remove(msg.Name);
-        var game = new BeachBallGame(){Name = msg.Name, Players = players, Score = new List<int>()};
+        var game = new BeachBallGame()
+        {
+            Name = msg.Name,
+            Players = players,
+            Score = new List<int>(),
+            PlayerUids = playerUids,
+            BallUid = ball
+        };
         game.Score.Add(0);
         game.Score.Add(0);
         _gameStates.Add(gameMap, game);
@@ -89,6 +105,7 @@ public sealed class BeachBallSystem : SharedBeachballSystem
         var lobby = new Lobby(ev.Name, null);
         _waitingLobbies[ev.Name] = lobby;
         JoinLobby((IPlayerSession)args.SenderSession, ev.Name, null);
+        lobby.MakeAdmin((IPlayerSession)args.SenderSession);
     }
 
     public override void Shutdown()
@@ -108,6 +125,7 @@ public sealed class BeachBallSystem : SharedBeachballSystem
         {
             e.Session.JoinGame();
             SetPlayerState(e.Session, BeachballPlayerState.MainMenu);
+            RaiseNetworkEvent(new LobbyListMessage(){Lobbies = _waitingLobbies.Values.Select(x => (NetworkedLobby)x).ToList()});
         }
     }
 
@@ -135,7 +153,7 @@ public sealed class BeachBallSystem : SharedBeachballSystem
         if(_playerGameStates[session] != BeachballPlayerState.Lobby)
             return;
 
-        if (_waitingLobbies.TryFirstOrNull(x => (x.Value).Players.ContainsKey(session), out var val))
+        if (_waitingLobbies.TryFirstOrNull(x => x.Value.Players.ContainsKey(session), out var val))
         {
             val.Value.Value.RemovePlayer(session);
             RaiseNetworkEvent(new LobbyListMessage(){Lobbies = _waitingLobbies.Values.Select(x => (NetworkedLobby)x).ToList()});

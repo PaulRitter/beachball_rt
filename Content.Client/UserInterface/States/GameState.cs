@@ -50,7 +50,7 @@ public sealed class GameState : State
 
         var winningScore = 0;
 
-        foreach (var paddle in _entityManager.EntityQuery<PaddleComponent>())
+        foreach (var paddle in _entityManager.EntityQuery<BeacherComponent>())
         {
             // There's only supposed to be two paddle entities.
             if (paddle.First)
