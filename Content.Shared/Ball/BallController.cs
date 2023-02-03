@@ -3,7 +3,9 @@ using Robust.Shared.Audio;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
 using Robust.Shared.Maths;
+using Robust.Shared.Physics;
 using Robust.Shared.Physics.Controllers;
+using Robust.Shared.Physics.Dynamics;
 using Robust.Shared.Player;
 
 namespace Content.Shared.Ball;
@@ -18,42 +20,33 @@ public sealed class BallController : VirtualController
         base.Initialize();
         
         //UpdatesBefore.Add(typeof(ArenaController));
+        SubscribeLocalEvent<BallComponent, StartCollideEvent>(OnCollideStartEvent);
+    }
+
+    private void OnCollideStartEvent(EntityUid uid, BallComponent component, StartCollideEvent args)
+    {
+        if(args.OtherFixture.ID != "Player") return;
+        
+        Comp<BallComponent>(uid).Frozen = false;
+        _audioSystem.PlayGlobal("/Audio/bloop.wav", Filter.Broadcast(), AudioParams.Default.WithVolume(-5f));
+
     }
 
     public override void UpdateAfterSolve(bool prediction, float frameTime)
     {
         base.UpdateAfterSolve(prediction, frameTime);
-        
-        return;
-
-        foreach (var (_, transform, physics) in EntityManager.EntityQuery<BallComponent, TransformComponent, PhysicsComponent>())
+        foreach (var (ball, physics) in EntityManager.EntityQuery<BallComponent, PhysicsComponent>())
         {
-            var bounced = false;
-
-            if (transform.WorldPosition.Y <= 0)
+            if (ball.Frozen)
             {
-                physics.LinearVelocity *= new Vector2(1, -1);
-                bounced = true;
+                physics.ResetDynamics();
             }
-            
-            var x = transform.WorldPosition.X;
-
-            if ((x <= SharedBeachballSystem.FieldBounds.left && physics.LinearVelocity.X < 0) ||
-                (x >= SharedBeachballSystem.FieldBounds.right && physics.LinearVelocity.X > 0))
-            {
-                physics.LinearVelocity *= new Vector2(-1, 1);
-                bounced = true;
-            }
-
-            if (bounced)
-            {
-                _audioSystem.PlayGlobal("/Audio/bloop.wav", Filter.Broadcast(), AudioParams.Default.WithVolume(-5f));
-            }
-            
-            //todo paul apply gravity
         }
     }
 }
 
 [RegisterComponent]
-public sealed class BallComponent : Component {}
+public sealed class BallComponent : Component
+{
+    public bool Frozen;
+}

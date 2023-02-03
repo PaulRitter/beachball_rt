@@ -6,16 +6,15 @@
   - type: Ball
   - type: Physics
     bodyType: Dynamic
+    friction: 0
   - type: Fixtures
     fixtures:
     - shape:
         !type:PhysShapeCircle
         radius: 2
-      mask:
-      - Solid
       layer:
       - Solid
-      restitution: 0.3
+      restitution: 1
 
 - type: entity
   name: Beachball

@@ -4,6 +4,7 @@
   description: net
   components:
   - type: Physics
+    friction: 0
   - type: Fixtures
     fixtures:
     - shape:
@@ -26,6 +27,7 @@
       texture: Beachball/background.rsi/background03.png
       drawdepth: Background
     - type: Physics
+      friction: 0
     - type: Fixtures
       fixtures:
       - shape:

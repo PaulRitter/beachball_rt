@@ -14,6 +14,7 @@ using Robust.Shared.GameObjects;
 using Robust.Shared.GameStates;
 using Robust.Shared.IoC;
 using Robust.Shared.Map;
+using Robust.Shared.Physics;
 using Robust.Shared.Players;
 using Robust.Shared.Utility;
 
@@ -170,6 +171,7 @@ public sealed class BeachBallSystem : SharedBeachballSystem
     public override void Update(float frameTime)
     {
         base.Update(frameTime);
+        return;
         _processed.Clear();
         foreach (var (_, transform) in EntityManager.EntityQuery<BallComponent, TransformComponent>())
         {
@@ -211,6 +213,9 @@ public sealed class BeachBallSystem : SharedBeachballSystem
 
     private void StartRound(MapId mapId, int ballIndex)
     {
+        var game = _gameStates[mapId];
+        
+        Comp<BallComponent>(game.BallUid).Frozen = true;
         //todo players to positions
         //todo ball to position
         //todo freeze ball until player moves
