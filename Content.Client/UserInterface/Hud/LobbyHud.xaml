@@ -1,12 +1,12 @@
-<Control xmlns="https://spacestation14.io" HorizontalExpand="True" VerticalExpand="True" HorizontalAlignment="Center" VerticalAlignment="Center">
+<Control xmlns="https://spacestation14.io" HorizontalAlignment="Center" VerticalAlignment="Center">
     <PanelContainer Margin="25 25 25 25">
-        <CenterContainer Margin="5 5 5 5" HorizontalExpand="True" VerticalExpand="True">
-            <BoxContainer Orientation="Vertical">
+        <CenterContainer Margin="5 5 5 5">
+            <BoxContainer Orientation="Vertical" MinSize="100 100">
                 <BoxContainer Orientation="Horizontal">
-                    <Button Text="Start Game" Disabled="True" Name="StartGameButton"></Button>
+                    <Button Text="Start Game" Disabled="True" Name="StartGameButton"/>
                     <Label Text="Players" />
                 </BoxContainer>
-                <ItemList Name="PlayerList" VerticalExpand="True" HorizontalExpand="True" SelectMode="Button"></ItemList>
+                <ItemList Name="PlayerList" VerticalExpand="True" SelectMode="Button"/>
             </BoxContainer>
         </CenterContainer>
     </PanelContainer>
