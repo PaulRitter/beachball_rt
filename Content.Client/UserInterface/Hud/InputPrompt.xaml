@@ -1,0 +1,17 @@
+﻿<Control xmlns="https://spacestation14.io"
+         xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
+         HorizontalExpand="True" VerticalExpand="True">
+    <CenterContainer>
+        <PanelContainer>
+            <BoxContainer Orientation="Vertical" Margin="5 10 5 5">
+                <Label Name="Prompt" Align="Center" VAlign="Center"/>
+                <LineEdit Name="Input" Access="Public"/>
+                <controls:HLine Color="#A5640A" Thickness="2" Margin="0 10 0 7"/>
+                <BoxContainer Orientation="Horizontal">
+                    <Button Name="CancelButton" Access="Public" HorizontalAlignment="Left" Margin="0 0 20 0" Text="Back"/>
+                    <Button Name="ConfirmButton" Access="Public" HorizontalAlignment="Right" Text="Submit"/>
+                </BoxContainer>
+            </BoxContainer>
+        </PanelContainer>
+    </CenterContainer>
+</Control>

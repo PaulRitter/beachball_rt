@@ -1,8 +1,9 @@
 ﻿<Control 
     xmlns="https://spacestation14.io" 
     xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
+    xmlns:hud="clr-namespace:Content.Client.UserInterface.Hud"
     HorizontalExpand="True" VerticalExpand="True" HorizontalAlignment="Center" VerticalAlignment="Center">
-    <PanelContainer Margin="25 25 25 25">
+    <PanelContainer Margin="25 25 25 25" Name="LobbyListPanel">
         <CenterContainer Margin="5 5 5 5" HorizontalExpand="True" VerticalExpand="True">
             <BoxContainer Orientation="Vertical" VerticalExpand="True" MinSize="100 100">
                 <PanelContainer MaxSize="24 24" HorizontalAlignment="Left" StyleClasses="back" Margin="0 0 0 5">
@@ -10,7 +11,10 @@
                 </PanelContainer>
                 <Label Text="Lobbies" />
                 <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
-                    <LineEdit Name="CreateLobbyName" MinWidth="300" PlaceHolder="Lobby Name..."/>
+                    <BoxContainer Orientation="Vertical">
+                        <LineEdit Name="CreateLobbyName" MinWidth="300" PlaceHolder="Lobby Name..."/>
+                        <LineEdit Name="CreateLobbyPassword" MinWidth="300" PlaceHolder="Lobby Password... (optional)"/>
+                    </BoxContainer>
                     <Button Name="CreateLobby" Text="Create Lobby"/>
                 </BoxContainer>
                 <controls:HLine Color="#A5640A" Thickness="2" Margin="0 5"/>
@@ -18,4 +22,6 @@
             </BoxContainer>
         </CenterContainer>
     </PanelContainer>
+    
+    <hud:InputPrompt Name="PasswordPrompt" Visible="False" Text="Enter Password:" Placeholder="Password..."/>
 </Control>

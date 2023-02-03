@@ -8,4 +8,5 @@ namespace Content.Shared.ClientMessages;
 public sealed class CreateLobbyRequestMessage : EntityEventArgs
 {
     public string Name { get; init; }
+    public string? Password { get; init; }
 }

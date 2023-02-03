@@ -107,14 +107,14 @@ public sealed class BeachballSystem : SharedBeachballSystem
         _clientNetManager.ClientDisconnect("Disconnected");
     }
 
-    public void JoinLobby(string lobby)
+    public void JoinLobby(string lobby, string? pw = null)
     {
-        RaiseNetworkEvent(new JoinLobbyRequestMessage(){Name = lobby});
+        RaiseNetworkEvent(new JoinLobbyRequestMessage(){Name = lobby, Password = pw});
     }
     
-    public void CreateLobby(string name)
+    public void CreateLobby(string name, string? pw)
     {
-        RaiseNetworkEvent(new CreateLobbyRequestMessage(){Name = name});
+        RaiseNetworkEvent(new CreateLobbyRequestMessage(){Name = name, Password = pw});
     }
 
     public void LeaveLobby()

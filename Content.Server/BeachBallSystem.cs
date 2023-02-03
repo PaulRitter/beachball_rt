@@ -46,7 +46,7 @@ public sealed class BeachBallSystem : SharedBeachballSystem
 
     private void OnJoinLobbyRequest(JoinLobbyRequestMessage ev, EntitySessionEventArgs args)
     {
-        JoinLobby((IPlayerSession)args.SenderSession, ev.Name, null);
+        JoinLobby((IPlayerSession)args.SenderSession, ev.Name, ev.Password);
     }
 
     private void OnLeaveLobbyRequest(LeaveLobbyRequestMessage ev, EntitySessionEventArgs args)
@@ -109,14 +109,16 @@ public sealed class BeachBallSystem : SharedBeachballSystem
         // remove excess whitespaces
         var name = ev.Name.Trim();
         //TODO: notify user
-        if(string.IsNullOrEmpty(name) ||
+        if(string.IsNullOrWhiteSpace(name) ||
             _waitingLobbies.ContainsKey(name) || 
             _playerGameStates[args.SenderSession] != BeachballPlayerState.MainMenu)
             return;
 
-        var lobby = new Lobby(name, null);
+        var password = string.IsNullOrWhiteSpace(ev.Password) ? null : ev.Password;
+
+        var lobby = new Lobby(name, password);
         _waitingLobbies[name] = lobby;
-        JoinLobby((IPlayerSession)args.SenderSession, name, null);
+        JoinLobby((IPlayerSession)args.SenderSession, name, password);
         lobby.MakeAdmin((IPlayerSession)args.SenderSession);
     }
 
