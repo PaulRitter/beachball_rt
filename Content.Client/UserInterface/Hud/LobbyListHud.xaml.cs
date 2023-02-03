@@ -47,7 +47,7 @@ public sealed partial class LobbyListHud : Control
         }
     }
     
-    void OnCreateLobbyOnOnPressed(BaseButton.ButtonEventArgs x) => _system.CreateLobby(CreateLobbyName.Text);
+    void OnCreateLobbyOnOnPressed(BaseButton.ButtonEventArgs x) => _system.CreateLobby(CreateLobbyName.Text, CreateLobbyPassword.Text);
     void OnBackButtonPressed(BaseButton.ButtonEventArgs x) => _system.Disconnect();
 
     void OnEnterWithPasswordPressed(BaseButton.ButtonEventArgs x)

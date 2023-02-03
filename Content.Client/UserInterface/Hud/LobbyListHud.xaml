@@ -5,7 +5,7 @@
     HorizontalExpand="True" VerticalExpand="True" HorizontalAlignment="Center" VerticalAlignment="Center">
     <PanelContainer Margin="25 25 25 25" Name="LobbyListPanel">
         <CenterContainer Margin="5 5 5 5" HorizontalExpand="True" VerticalExpand="True">
-            <BoxContainer Orientation="Vertical" VerticalExpand="True" MinSize="100 100">
+            <BoxContainer Orientation="Vertical" VerticalExpand="True" MinSize="100 400">
                 <PanelContainer MaxSize="24 24" HorizontalAlignment="Left" StyleClasses="back" Margin="0 0 0 5">
                     <TextureButton Name="BackButton" StyleClasses="back"/>
                 </PanelContainer>
