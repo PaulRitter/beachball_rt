@@ -22,7 +22,7 @@ public sealed class StyleSheetManager
         
     public void Initialize()
     {
-        var fontRes = _resourceCache.GetResource<FontResource>("/Fonts/NotoSans/NotoSans-Regular.ttf");
+        var fontRes = _resourceCache.GetResource<FontResource>("/Fonts/afrikas.woff");
         var font = new VectorFont(fontRes, 10);
         var bigFont = new VectorFont(fontRes, 32);
 
@@ -35,7 +35,12 @@ public sealed class StyleSheetManager
         var panelDark = new StyleBoxTexture { Texture = panelDarkTex };
         panelDark.SetPatchMargin(StyleBox.Margin.All, 2);
         panelDark.SetExpandMargin(StyleBox.Margin.All, 2);
-            
+
+        var panelDarkHighlightTex = _resourceCache.GetResource<TextureResource>("/Textures/Interface/panelDarkHighlight.png");
+        var panelDarkHighlight = new StyleBoxTexture { Texture = panelDarkHighlightTex };
+        panelDarkHighlight.SetPatchMargin(StyleBox.Margin.All, 2);
+        panelDarkHighlight.SetExpandMargin(StyleBox.Margin.All, 2);
+
         var tabContainerPanelTex = _resourceCache.GetResource<TextureResource>("/Textures/Interface/tabPanel.png");
         var tabContainerPanel = new StyleBoxTexture
         {
@@ -49,7 +54,7 @@ public sealed class StyleSheetManager
         tabContainerBoxInactive.SetContentMarginOverride(StyleBox.Margin.Horizontal, 5);
             
         var textureCloseButton = _resourceCache.GetResource<TextureResource>("/Textures/Interface/cross.png").Texture;
-            
+
         _userInterfaceManager.Stylesheet = new Stylesheet(new[]
         {
             new StyleRule(
@@ -57,8 +62,10 @@ public sealed class StyleSheetManager
                 new[]
                 {
                     new StyleProperty("font", font),
+                    new StyleProperty("font-color", Color.FromHex("#3A3836")),
                     new StyleProperty(PanelContainer.StylePropertyPanel, panel),
-                    new StyleProperty(LineEdit.StylePropertyStyleBox, panelDark)
+                    new StyleProperty(LineEdit.StylePropertyStyleBox, panel),
+                    new StyleProperty(LineEdit.StylePropertyCursorColor, Color.FromHex("#6A6764")),
                 }),
             // TabContainer
             new StyleRule(new SelectorElement(typeof(TabContainer), null, null, null),
@@ -68,7 +75,32 @@ public sealed class StyleSheetManager
                     new StyleProperty(TabContainer.StylePropertyTabStyleBox, tabContainerBoxActive),
                     new StyleProperty(TabContainer.StylePropertyTabStyleBoxInactive, tabContainerBoxInactive),
                 }),
-            // Window close button base texture.
+            // LineEdit Placeholder
+            new StyleRule(
+                new SelectorElement(typeof(LineEdit), null, null, new[] {LineEdit.StylePseudoClassPlaceholder}), new[]
+                {
+                    new StyleProperty("font-color", Color.FromHex("#6A6764")),
+                }),
+            // Buttons
+            new StyleRule(
+                new SelectorElement(typeof(Button), null, null, null), new[]
+                {
+                    new StyleProperty("font-color", Color.FromHex("#3D2403")),
+                    new StyleProperty(Button.StylePropertyStyleBox, panelDark)
+                }),
+            new StyleRule(
+                new SelectorElement(typeof(Button), null, null, new[] {Button.StylePseudoClassHover}), new[]
+                {
+                    new StyleProperty("font-color", Color.FromHex("#6B3F05")),
+                    new StyleProperty(Button.StylePropertyStyleBox, panelDarkHighlight)
+                }),
+            // Game label.
+            new StyleRule(
+                new SelectorElement(typeof(Label), new [] {StyleClassLabelGame}, null, null), new []
+                {
+                    new StyleProperty(Label.StylePropertyFont, bigFont)
+                }),
+             // Window close button base texture.
             new StyleRule(
                 new SelectorElement(typeof(TextureButton), new[] {DefaultWindow.StyleClassWindowCloseButton}, null,
                     null),
@@ -93,12 +125,6 @@ public sealed class StyleSheetManager
                 {
                     new StyleProperty(Control.StylePropertyModulateSelf, Color.FromHex("#FFCCFF")),
                 }),
-            // Game label.
-            new StyleRule(
-                new SelectorElement(typeof(Label), new [] {StyleClassLabelGame}, null, null), new []
-                {
-                    new StyleProperty(Label.StylePropertyFont, bigFont)
-                })
         });
     }
 }

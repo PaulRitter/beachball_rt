@@ -4,7 +4,7 @@
             <BoxContainer Orientation="Vertical" VerticalExpand="True" MinSize="100 100">
                 <Label Text="Lobbies" />
                 <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
-                    <LineEdit Name="CreateLobbyName" MinWidth="300"/>
+                    <LineEdit Name="CreateLobbyName" MinWidth="300" PlaceHolder="Lobby Name..."/>
                     <Button Name="CreateLobby" Text="Create Lobby"/>
                 </BoxContainer>
                 <ItemList Name="LobbyList" VerticalExpand="True" HorizontalExpand="True" SelectMode="Button"/>
