@@ -86,7 +86,7 @@ public sealed class BeachballSystem : SharedBeachballSystem
         _cameraUid = EntityManager.SpawnEntity(null, new MapCoordinates(new Vector2(0,0), Transform(ev.AttachedEntity).MapID));
         var eye = EnsureComp<EyeComponent>(_cameraUid.Value);
         eye.Current = true;
-        eye.Zoom = Vector2.One * 1.5f;
+        eye.Zoom = Vector2.One * 1.05f;
     }
 
     private void OnScored(ScoreUpdate ev)

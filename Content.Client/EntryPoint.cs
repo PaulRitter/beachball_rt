@@ -1,4 +1,3 @@
-using Content.Client.Overlays;
 using Content.Client.UserInterface;
 using JetBrains.Annotations;
 using Robust.Client.Graphics;
@@ -57,6 +56,5 @@ public sealed class EntryPoint : GameClient
         var overlayManager = IoCManager.Resolve<IOverlayManager>();
             
         // Add the needed overlays.
-        overlayManager.AddOverlay(new ArenaOverlay());
     }
 }
