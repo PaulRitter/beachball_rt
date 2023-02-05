@@ -6,7 +6,6 @@
   - type: Ball
   - type: Physics
     bodyType: Dynamic
-    friction: 0
   - type: Fixtures
     fixtures:
     - shape:
@@ -14,7 +13,7 @@
         radius: 2
       layer:
       - Solid
-      restitution: 1
+      restitution: 0
 
 - type: entity
   name: Beachball
