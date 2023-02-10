@@ -13,20 +13,20 @@ public sealed class GravityController : VirtualController
     {
         base.UpdateAfterSolve(prediction, frameTime);
 
-        void ApplyGravity(TransformComponent transform, PhysicsComponent physics)
+        void ApplyGravity(TransformComponent transform, PhysicsComponent physics, float offset = 1f)
         {
             if (transform.WorldPosition.Y <= -15)
             {
                 transform.WorldPosition = new Vector2(transform.WorldPosition.X, -15);
                 return;
             }
-            physics.ApplyForce(-Vector2.UnitY * 9.81f * 5);
+            physics.ApplyForce(-Vector2.UnitY * 9.81f * 5 * offset);
         }
         
         foreach (var (_, transform, physics) in EntityManager
                      .EntityQuery<BallComponent, TransformComponent, PhysicsComponent>())
         {
-            ApplyGravity(transform, physics);
+            ApplyGravity(transform, physics, 0.5f);
         }
         
         foreach (var (_, transform, physics) in EntityManager

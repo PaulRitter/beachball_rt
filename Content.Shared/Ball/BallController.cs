@@ -43,7 +43,9 @@ public sealed class BallController : VirtualController
                 Comp<BallComponent>(uid).Frozen = false;
                 _audioSystem.PlayGlobal("/Audio/bloop.wav", Filter.Broadcast(), AudioParams.Default.WithVolume(-5f));
                 args.OurFixture.Body.ResetDynamics();
-                args.OurFixture.Body.LinearVelocity = (args.OtherFixture.Body.LinearVelocity * 2 + args.OurFixture.Body.LinearVelocity) / 2f;
+                var bounceVector = (Transform(uid).WorldPosition - Transform(args.OurFixture.Body.Owner).WorldPosition)
+                    .Normalized * args.OtherFixture.Body.LinearVelocity.Length * 2;
+                args.OurFixture.Body.LinearVelocity = (bounceVector + args.OurFixture.Body.LinearVelocity) / 2f;
                 break;
             case "LeftWall":
                 if (args.OurFixture.Body.LinearVelocity.X < 0f) //its moving into the wall
