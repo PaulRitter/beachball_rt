@@ -8,42 +8,48 @@ public sealed class ContentCVars: CVars
 {
     // ----- BALL CVARS -----
     /// <summary>
-    ///     Factor by which the ball speed is multiplied every time it collides with a paddle.
+    ///     Factor by which the ball gravity will be multiplied.
     /// </summary>
-    public static readonly CVarDef<float> BallSpeedup =
-        CVarDef.Create("ball.speedup", 1.15f, CVar.REPLICATED | CVar.SERVER);
+    public static readonly CVarDef<float> BallGravityMultiplier =
+        CVarDef.Create("ball.gravity", 0.7f, CVar.REPLICATED | CVar.SERVER);
 
     /// <summary>
-    ///     The ball will be sped up based on the average score.
+    ///     Factor by which the calculated bounce vector will be multiplied
     /// </summary>
-    public static readonly CVarDef<float> BallSpeedupScore =
-        CVarDef.Create("ball.speedup_score", 0.05f, CVar.REPLICATED | CVar.SERVER);
+    public static readonly CVarDef<float> BallBounceVectorMultiplier =
+        CVarDef.Create("ball.bounce_vector_mult", 2f, CVar.REPLICATED | CVar.SERVER);
 
     /// <summary>
-    ///     Maximum speed the ball will move at.
+    ///     Factor by which the own velocity will be multiplied on bounce
     /// </summary>
-    public static readonly CVarDef<float> BallMaximumSpeed =
-        CVarDef.Create("ball.maximum_speed", 20f, CVar.REPLICATED | CVar.SERVER);
+    public static readonly CVarDef<float> BallBounceOwnVelocityMultiplier =
+        CVarDef.Create("ball.bounce_own_velocity_mult", 2f, CVar.REPLICATED | CVar.SERVER);
+    
+    /// <summary>
+    ///     Factor by which the other velocity will be multiplied on bounce
+    /// </summary>
+    public static readonly CVarDef<float> BallBounceOtherVelocityMultiplier =
+        CVarDef.Create("ball.bounce_other_velocity_mult", 2f, CVar.REPLICATED | CVar.SERVER);
         
-    // ----- PONG CVARS -----
+    // ----- PLAYER CVARS -----
         
     /// <summary>
-    ///     Number of points a player has to score to win.
+    ///     Factor by which the player gravity will be multiplied.
     /// </summary>
-    public static readonly CVarDef<int> PongWinThreshold =
-        CVarDef.Create("pong.win_threshold", 10, CVar.SERVERONLY);
+    public static readonly CVarDef<float> PlayerGravityMultiplier =
+        CVarDef.Create("player.gravity", 1f, CVar.REPLICATED | CVar.SERVER);
+
+    // ----- GAME CVARS -----
         
     /// <summary>
-    ///     Time to wait after the game has ended before restarting.
+    ///     Score needed to win.
     /// </summary>
-    public static readonly CVarDef<float> PongRestartTimer =
-        CVarDef.Create("pong.restart_timer", 10f, CVar.SERVERONLY);
-        
-    // ----- PADDLE CVARS -----
-        
+    public static readonly CVarDef<int> GameWinScore =
+        CVarDef.Create("game.win_score", 11, CVar.SERVERONLY | CVar.SERVER);
+    
     /// <summary>
-    ///     Paddle movement speed.
+    ///     Seconds to wait after the game has ended before restarting.
     /// </summary>
-    public static readonly CVarDef<float> PaddleSpeed =
-        CVarDef.Create("pong.paddle_speed", 7f, CVar.REPLICATED | CVar.SERVER);
+    public static readonly CVarDef<float> GameRestartTimer =
+        CVarDef.Create("game.restart_timer", 1f, CVar.SERVERONLY | CVar.SERVER);
 }

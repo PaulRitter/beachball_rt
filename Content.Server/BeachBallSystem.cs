@@ -197,12 +197,17 @@ public sealed class BeachBallSystem : SharedBeachballSystem
         if (game.Score[ballIndex] >= WinScore)
         {
             //win!!!!!
-            _mapManager.SetMapPaused(mapId, true);
-            Timer.Spawn(AfterWinDuration, () => CloseGame(mapId));
+            OnWin(mapId, ballIndex);
             return;
         }
         
         ResetField(game.PlayerUids, game.BallUid, ballIndex);
+    }
+
+    private void OnWin(MapId mapId, int playerIndex)
+    {
+        _mapManager.SetMapPaused(mapId, true);
+        Timer.Spawn(AfterWinDuration, () => CloseGame(mapId));
     }
 
     private void CloseGame(MapId mapId)

@@ -1,6 +1,7 @@
 using System;
 using JetBrains.Annotations;
 using Robust.Shared.Audio;
+using Robust.Shared.Configuration;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
 using Robust.Shared.Maths;
@@ -16,21 +17,25 @@ public sealed class BallController : VirtualController
 {
     [Dependency] private readonly SharedBeachballSystem _beachballSystem = default!;
     [Dependency] private readonly SharedAudioSystem _audioSystem = default!;
+    [Dependency] private readonly IConfigurationManager _configuration = default!;
 
+    private float _bounceMult;
+    private float _ownVelMult;
+    private float _otherVelMult;
+    
     public override void Initialize()
     {
         base.Initialize();
         
         SubscribeLocalEvent<BallComponent, StartCollideEvent>(OnStartCollide);
+        
+        _configuration.OnValueChanged(ContentCVars.BallBounceVectorMultiplier, val => _bounceMult = val, true);
+        _configuration.OnValueChanged(ContentCVars.BallBounceOwnVelocityMultiplier, val => _ownVelMult = val, true);
+        _configuration.OnValueChanged(ContentCVars.BallBounceOtherVelocityMultiplier, val => _otherVelMult = val, true);
     }
 
     private void OnStartCollide(EntityUid uid, BallComponent component, StartCollideEvent args)
     {
-        switch (args.OtherFixture.ID)
-        {
-            
-        }
-
         switch (args.OtherFixture.ID)
         {
             case "Floor":
@@ -45,7 +50,7 @@ public sealed class BallController : VirtualController
                 args.OurFixture.Body.ResetDynamics();
                 var bounceVector = (Transform(uid).WorldPosition - Transform(args.OtherFixture.Body.Owner).WorldPosition)
                     .Normalized * args.OtherFixture.Body.LinearVelocity.Length;
-                args.OurFixture.Body.LinearVelocity = (bounceVector + args.OurFixture.Body.LinearVelocity + args.OtherFixture.Body.LinearVelocity) / 3f * 2f; //tweak param
+                args.OurFixture.Body.LinearVelocity = (bounceVector * _bounceMult + args.OurFixture.Body.LinearVelocity * _ownVelMult + args.OtherFixture.Body.LinearVelocity * _otherVelMult) / 3f;
                 break;
             case "LeftWall":
                 if (args.OurFixture.Body.LinearVelocity.X < 0f) //its moving into the wall

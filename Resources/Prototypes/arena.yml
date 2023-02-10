@@ -48,7 +48,7 @@
           - Solid
         layer:
           - Solid
-        friction: 0.8
+        friction: 0.9
       - shape:
           !type:PhysShapeAabb
           bounds: "22,-20,30,100"
