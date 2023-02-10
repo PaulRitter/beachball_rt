@@ -30,7 +30,7 @@ public abstract class SharedBeachballSystem : EntitySystem
     public static Vector2 P2Coordinates = new(15, -10);
     public static Vector2 P1BallCoordinates = new(-13, -3);
     public static Vector2 P2BallCoordinates = new(13, -3);
-    public const int WinScore = 2;
+    public const int WinScore = 11;
     public static TimeSpan AfterWinDuration = TimeSpan.FromSeconds(1);
 
     //todo implement to predict resetting on client
