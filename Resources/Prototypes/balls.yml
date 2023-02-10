@@ -11,9 +11,9 @@
     - shape:
         !type:PhysShapeCircle
         radius: 2
+      id: Ball
       layer:
       - Solid
-      restitution: 0
 
 - type: entity
   name: Beachball

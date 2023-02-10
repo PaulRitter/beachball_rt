@@ -34,6 +34,7 @@
       - shape:
           !type:PhysShapeAabb
           bounds: "-30,-20,-22,100"
+        id: LeftWall
         mask:
           - Solid
         layer:
@@ -51,6 +52,7 @@
       - shape:
           !type:PhysShapeAabb
           bounds: "22,-20,30,100"
+        id: RightWall
         mask:
           - Solid
         layer:
@@ -59,6 +61,7 @@
       - shape:
           !type:PhysShapeAabb
           bounds: "-30,95,30,100"
+        id: TopWall
         mask:
           - Solid
         layer:
@@ -67,6 +70,7 @@
       - shape:
           !type:PhysShapeAabb
           bounds: "-0.9,-20,-0.7,100"
+        id: PlayerDivider
         mask:
           - PlayerOnly
         layer:

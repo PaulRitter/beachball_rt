@@ -186,7 +186,7 @@ public sealed class BeachBallSystem : SharedBeachballSystem
         SetPlayerState(session, BeachballPlayerState.MainMenu);
     }
 
-    protected override void OnScored(MapId mapId, int ballIndex)
+    public override void OnScored(MapId mapId, int ballIndex)
     {
         if(!_gameStates.TryGetValue(mapId, out var game))
             return;

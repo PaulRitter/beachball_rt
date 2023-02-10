@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
 using Robust.Shared.Maths;
 using Robust.Shared.Physics.Controllers;
+using Robust.Shared.Physics.Dynamics;
 using Robust.Shared.Timing;
 
 namespace Content.Shared.Paddle;
@@ -13,6 +15,29 @@ public sealed class BeacherController : VirtualController
 {
     [Dependency] private readonly IGameTiming _gameTiming = default!;
     
+    public override void Initialize()
+    {
+        base.Initialize();
+        
+        SubscribeLocalEvent<BeacherComponent, EndCollideEvent>(OnEndCollide);
+        SubscribeLocalEvent<BeacherComponent, StartCollideEvent>(OnStartCollide);
+    }
+    
+    private void OnStartCollide(EntityUid uid, BeacherComponent component, StartCollideEvent args)
+    {
+        if(args.OtherFixture.ID != SharedBeachballSystem.FloorFixtureId) return;
+
+        component.TouchingFloor = true;
+        component.CanBoost = true;
+    }
+
+    private void OnEndCollide(EntityUid uid, BeacherComponent component, EndCollideEvent args)
+    {
+        if(args.OtherFixture.ID != SharedBeachballSystem.FloorFixtureId) return;
+        
+        component.TouchingFloor = false;
+    }
+
     public override void UpdateBeforeSolve(bool prediction, float frameTime)
     {
         base.UpdateBeforeSolve(prediction, frameTime);
