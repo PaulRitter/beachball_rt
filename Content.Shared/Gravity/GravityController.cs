@@ -26,7 +26,7 @@ public sealed class GravityController : VirtualController
         foreach (var (_, transform, physics) in EntityManager
                      .EntityQuery<BallComponent, TransformComponent, PhysicsComponent>())
         {
-            ApplyGravity(transform, physics, 0.5f);
+            ApplyGravity(transform, physics, 0.7f);
         }
         
         foreach (var (_, transform, physics) in EntityManager
