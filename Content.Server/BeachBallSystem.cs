@@ -27,12 +27,16 @@ public sealed class BeachBallSystem : SharedBeachballSystem
     [Dependency] private readonly IConfigurationManager _cfgManager = default!;
     [Dependency] private readonly IMapManager _mapManager = default!;
     [Dependency] private readonly IMapLoader _mapLoader = default!;
+    [Dependency] private readonly IConfigurationManager _configuration = default!;
 
+    private int _winScore;
+    private TimeSpan _afterWinDuration;
+    
     private Dictionary<ICommonSession, MapId> _activePlayers = new();
     private Dictionary<ICommonSession, BeachballPlayerState> _playerGameStates = new();
     private Dictionary<string, Lobby> _waitingLobbies = new();
     private Dictionary<MapId, BeachBallGame> _gameStates = new();
-    
+
     public override void Initialize()
     {
         base.Initialize();
@@ -41,6 +45,15 @@ public sealed class BeachBallSystem : SharedBeachballSystem
         SubscribeNetworkEvent<StartLobbyRequestMessage>(OnStartLobbyRequest);
         SubscribeNetworkEvent<JoinLobbyRequestMessage>(OnJoinLobbyRequest);
         SubscribeNetworkEvent<LeaveLobbyRequestMessage>(OnLeaveLobbyRequest);
+        
+        _configuration.OnValueChanged(ContentCVars.GameRestartTimer, val => _afterWinDuration = TimeSpan.FromSeconds(val), true);
+        _configuration.OnValueChanged(ContentCVars.GameWinScore, OnWinScoreChanged, true);
+    }
+    
+    private void OnWinScoreChanged(int val)
+    {
+        _winScore = val;
+        //todo check all games for win score
     }
 
     private void OnJoinLobbyRequest(JoinLobbyRequestMessage ev, EntitySessionEventArgs args)
@@ -194,7 +207,7 @@ public sealed class BeachBallSystem : SharedBeachballSystem
         game.Score[ballIndex] += 1;
         RaiseNetworkEvent(new ScoreUpdate(){Scores = game.Score});
 
-        if (game.Score[ballIndex] >= WinScore)
+        if (game.Score[ballIndex] >= _winScore)
         {
             //win!!!!!
             OnWin(mapId, ballIndex);
@@ -207,7 +220,7 @@ public sealed class BeachBallSystem : SharedBeachballSystem
     private void OnWin(MapId mapId, int playerIndex)
     {
         _mapManager.SetMapPaused(mapId, true);
-        Timer.Spawn(AfterWinDuration, () => CloseGame(mapId));
+        Timer.Spawn(_afterWinDuration, () => CloseGame(mapId));
     }
 
     private void CloseGame(MapId mapId)

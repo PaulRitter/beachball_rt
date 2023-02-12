@@ -1,15 +1,15 @@
 <Control xmlns="https://spacestation14.io" 
          HorizontalExpand="True" VerticalExpand="True" HorizontalAlignment="Stretch" VerticalAlignment="Top">
     <BoxContainer Orientation="Horizontal" Margin="10 10 10 10" Align="Center" SeparationOverride="50" HorizontalExpand="True" HorizontalAlignment="Stretch">
-        <Label Name="LabelPlayerOneName" Text="Player 1" HorizontalAlignment="Right" StyleClasses="LabelGame" Modulate="#008000"/>
+        <Label Name="LabelPlayerOneName" Text="Player 1" StyleClasses="LabelGame" Modulate="#008000"/>
         <BoxContainer Orientation="Vertical" SeparationOverride="5" HorizontalExpand="True" HorizontalAlignment="Center">
             <BoxContainer Orientation="Horizontal" HorizontalAlignment="Center">
                 <Label Name="LabelPlayerOneScore" Text="0" StyleClasses="LabelGame"/>
                 <Label Text=" - " StyleClasses="LabelGame"/>
                 <Label Name="LabelPlayerTwoScore" Text="0" StyleClasses="LabelGame"/>    
             </BoxContainer>
-            <Label Text="Score 11 to win" HorizontalAlignment="Center" StyleClasses="LabelGame"/>
+            <Label Text="Score 11 to win" HorizontalAlignment="Center"/>
         </BoxContainer>
-        <Label Name="LabelPlayerTwoName" Text="Player 2" HorizontalAlignment="Left" StyleClasses="LabelGame" Modulate="#0000ff"/>
+        <Label Name="LabelPlayerTwoName" Text="Player 2" StyleClasses="LabelGame" Modulate="#0000ff"/>
     </BoxContainer>
 </Control>

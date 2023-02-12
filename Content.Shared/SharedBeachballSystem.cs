@@ -26,29 +26,12 @@ public abstract class SharedBeachballSystem : EntitySystem
     public static Vector2 P2BallCoordinates = new(13, -3);
     
     [Dependency] private readonly IPhysicsManager _physicsManager = default!;
-    [Dependency] private readonly IConfigurationManager _configuration = default!;
 
     public const float BoostCoolDown = 2f; //todo cvar
     public const float MaxTimeBetweenBoostPress = 1f; //todo cvar   
     public const int PlayerSpeed = 500; //todo cvar
     public const int JumpSpeed = 2000; //todo cvar
     public const float MaxHorizontalVelocity = 10; //todo cvar
-    public int WinScore { get; private set; }
-    public TimeSpan AfterWinDuration { get; private set; }
-
-    public override void Initialize()
-    {
-        base.Initialize();
-        
-        _configuration.OnValueChanged(ContentCVars.GameRestartTimer, val => AfterWinDuration = TimeSpan.FromSeconds(val), true);
-        _configuration.OnValueChanged(ContentCVars.GameWinScore, OnWinScoreChanged, true);
-    }
-
-    private void OnWinScoreChanged(int val)
-    {
-        WinScore = val;
-        //todo check all games for win score
-    }
 
     //todo implement to predict resetting on client
     public virtual void OnScored(MapId mapId, int ballIndex){}

@@ -22,6 +22,7 @@ public sealed class BallController : VirtualController
     private float _bounceMult;
     private float _ownVelMult;
     private float _otherVelMult;
+    private float _wallMult;
     
     public override void Initialize()
     {
@@ -32,6 +33,7 @@ public sealed class BallController : VirtualController
         _configuration.OnValueChanged(ContentCVars.BallBounceVectorMultiplier, val => _bounceMult = val, true);
         _configuration.OnValueChanged(ContentCVars.BallBounceOwnVelocityMultiplier, val => _ownVelMult = val, true);
         _configuration.OnValueChanged(ContentCVars.BallBounceOtherVelocityMultiplier, val => _otherVelMult = val, true);
+        _configuration.OnValueChanged(ContentCVars.BallBounceWallMultiplier, val => _wallMult = val, true);
     }
 
     private void OnStartCollide(EntityUid uid, BallComponent component, StartCollideEvent args)
@@ -56,14 +58,14 @@ public sealed class BallController : VirtualController
                 if (args.OurFixture.Body.LinearVelocity.X < 0f) //its moving into the wall
                 {
                     args.OurFixture.Body.LinearVelocity = new Vector2(args.OurFixture.Body.LinearVelocity.X * -1f,
-                        args.OurFixture.Body.LinearVelocity.Y);
+                        args.OurFixture.Body.LinearVelocity.Y) * _wallMult;
                 }
                 break;
             case "RightWall":
                 if (args.OurFixture.Body.LinearVelocity.X > 0f) //its moving into the wall
                 {
                     args.OurFixture.Body.LinearVelocity = new Vector2(args.OurFixture.Body.LinearVelocity.X * -1f,
-                        args.OurFixture.Body.LinearVelocity.Y);
+                        args.OurFixture.Body.LinearVelocity.Y) * _wallMult;
                 }
                 break;
         }
