@@ -71,6 +71,12 @@ public sealed class BeacherSystem : EntitySystem
         if (state)
         {
             beacher.Pressed |= button;
+            if (beacher.LastPress.Button == button && beacher.LastPress.timeLeftForBoost > 0 && beacher.BoostCooldown == 0f)
+            {
+                Comp<PhysicsComponent>(session.AttachedEntity.Value).LinearVelocity *= 2;
+                beacher.CanBoost = beacher.TouchingFloor;
+                beacher.BoostCooldown = SharedBeachballSystem.BoostCoolDown;
+            }
         }
         else
         {

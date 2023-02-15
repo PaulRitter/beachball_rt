@@ -48,7 +48,7 @@ public sealed class BeacherController : VirtualController
             {
                 beacher.LastPress.timeLeftForBoost = MathF.Max(0f, beacher.LastPress.timeLeftForBoost -= frameTime);
             }
-
+            
             if (beacher.BoostCooldown > 0f)
             {
                 beacher.BoostCooldown = MathF.Max(0f, beacher.BoostCooldown -= frameTime);
@@ -69,22 +69,11 @@ public sealed class BeacherController : VirtualController
                 force -= Vector2.UnitY * SharedBeachballSystem.PlayerSpeed;
 
             physics.ApplyForce(force);
-
             
             physics.LinearVelocity =
                 new Vector2(
                     Math.Clamp(physics.LinearVelocity.X, -SharedBeachballSystem.MaxHorizontalVelocity,
                         SharedBeachballSystem.MaxHorizontalVelocity), physics.LinearVelocity.Y);
-                
-            continue;
-            
-            if (beacher.LastPress.timeLeftForBoost > 0f && beacher.BoostCooldown == 0f)
-            {
-                beacher.BoostCooldown = SharedBeachballSystem.BoostCoolDown;
-                //velocity *= 2;
-                beacher.CanBoost = false;
-            }
-
         }
     }
 }
