@@ -50,8 +50,7 @@ public sealed class BallController : VirtualController
                 Comp<BallComponent>(uid).Frozen = false;
                 _audioSystem.PlayGlobal("/Audio/bloop.wav", Filter.Broadcast(), AudioParams.Default.WithVolume(-5f));
                 args.OurFixture.Body.ResetDynamics();
-                var bounceVector = (Transform(uid).WorldPosition - Transform(args.OtherFixture.Body.Owner).WorldPosition)
-                    .Normalized * args.OtherFixture.Body.LinearVelocity.Length;
+                var bounceVector = (Transform(uid).WorldPosition - Transform(args.OtherFixture.Body.Owner).WorldPosition).Normalized;
                 args.OurFixture.Body.LinearVelocity = (bounceVector * _bounceMult + args.OurFixture.Body.LinearVelocity * _ownVelMult + args.OtherFixture.Body.LinearVelocity * _otherVelMult).Normalized * (args.OtherFixture.Body.LinearVelocity.Length + args.OurFixture.Body.LinearVelocity.Length);
                 break;
             case "LeftWall":
