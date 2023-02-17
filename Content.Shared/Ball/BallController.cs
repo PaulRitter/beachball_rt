@@ -52,7 +52,7 @@ public sealed class BallController : VirtualController
                 args.OurFixture.Body.ResetDynamics();
                 var bounceVector = (Transform(uid).WorldPosition - Transform(args.OtherFixture.Body.Owner).WorldPosition)
                     .Normalized * args.OtherFixture.Body.LinearVelocity.Length;
-                args.OurFixture.Body.LinearVelocity = (bounceVector * _bounceMult + args.OurFixture.Body.LinearVelocity * _ownVelMult + args.OtherFixture.Body.LinearVelocity * _otherVelMult) / 3f;
+                args.OurFixture.Body.LinearVelocity = (bounceVector * _bounceMult + args.OurFixture.Body.LinearVelocity * _ownVelMult + args.OtherFixture.Body.LinearVelocity * _otherVelMult).Normalized * (args.OtherFixture.Body.LinearVelocity.Length + args.OurFixture.Body.LinearVelocity.Length);
                 break;
             case "LeftWall":
                 if (args.OurFixture.Body.LinearVelocity.X < 0f) //its moving into the wall
