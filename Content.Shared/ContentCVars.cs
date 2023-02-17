@@ -17,25 +17,25 @@ public sealed class ContentCVars: CVars
     ///     Factor by which the calculated bounce vector will be multiplied
     /// </summary>
     public static readonly CVarDef<float> BallBounceVectorMultiplier =
-        CVarDef.Create("ball.bounce_vector_mult", 2f, CVar.REPLICATED | CVar.SERVER);
+        CVarDef.Create("ball.bvm", 2f, CVar.REPLICATED | CVar.SERVER);
 
     /// <summary>
     ///     Factor by which the own velocity will be multiplied on bounce
     /// </summary>
     public static readonly CVarDef<float> BallBounceOwnVelocityMultiplier =
-        CVarDef.Create("ball.bounce_own_velocity_mult", 2f, CVar.REPLICATED | CVar.SERVER);
+        CVarDef.Create("ball.bovm", 2f, CVar.REPLICATED | CVar.SERVER);
     
     /// <summary>
     ///     Factor by which the other velocity will be multiplied on bounce
     /// </summary>
     public static readonly CVarDef<float> BallBounceOtherVelocityMultiplier =
-        CVarDef.Create("ball.bounce_other_velocity_mult", 2f, CVar.REPLICATED | CVar.SERVER);
+        CVarDef.Create("ball.botvm", 2f, CVar.REPLICATED | CVar.SERVER);
     
     /// <summary>
     ///     Factor by which the other velocity will be multiplied on bounce
     /// </summary>
     public static readonly CVarDef<float> BallBounceWallMultiplier =
-        CVarDef.Create("ball.bounce_wall_mult", 0.6f, CVar.REPLICATED | CVar.SERVER);
+        CVarDef.Create("ball.bwm", 0.6f, CVar.REPLICATED | CVar.SERVER);
         
     // ----- PLAYER CVARS -----
         
