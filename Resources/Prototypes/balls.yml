@@ -10,7 +10,7 @@
     fixtures:
     - shape:
         !type:PhysShapeCircle
-        radius: 2
+        radius: 1.5
       id: Ball
       layer:
       - Solid
