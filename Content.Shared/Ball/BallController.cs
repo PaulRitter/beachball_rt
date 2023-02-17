@@ -51,6 +51,12 @@ public sealed class BallController : VirtualController
                 _audioSystem.PlayGlobal("/Audio/bloop.wav", Filter.Broadcast(), AudioParams.Default.WithVolume(-5f));
                 args.OurFixture.Body.ResetDynamics();
                 var bounceVector = (Transform(uid).WorldPosition - Transform(args.OtherFixture.Body.Owner).WorldPosition).Normalized;
+                
+                //todo spin
+                //todo scale down players 0.8
+                //todo cvar for boost
+                //todo remove boost cooldown
+
                 args.OurFixture.Body.LinearVelocity = (bounceVector * _bounceMult + args.OurFixture.Body.LinearVelocity * _ownVelMult + args.OtherFixture.Body.LinearVelocity * _otherVelMult).Normalized * (args.OtherFixture.Body.LinearVelocity.Length + args.OurFixture.Body.LinearVelocity.Length);
                 break;
             case "LeftWall":

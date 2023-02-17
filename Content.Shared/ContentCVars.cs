@@ -17,7 +17,7 @@ public sealed class ContentCVars: CVars
     ///     Factor by which the calculated bounce vector will be multiplied
     /// </summary>
     public static readonly CVarDef<float> BallBounceVectorMultiplier =
-        CVarDef.Create("ball.bvm", 2f, CVar.REPLICATED | CVar.SERVER);
+        CVarDef.Create("ball.bvm", 30f, CVar.REPLICATED | CVar.SERVER);
 
     /// <summary>
     ///     Factor by which the own velocity will be multiplied on bounce
